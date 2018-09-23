@@ -19,12 +19,12 @@ Mount the directory where you want the generated source code to be written as `/
 
 Linux / MacOS:
 ```bash
-docker run -v $(pwd):/src dtr.fintlabs.no/jenkins/fint-model:latest <ARGS>
+docker run -v $(pwd):/src dtr.fintlabs.no/jenkins/fint-graphql-cli:latest <ARGS>
 ```
 
 Windows PowerShell:
 ```ps1
-docker run -v ${pwd}:/src dtr.fintlabs.no/jenkins/fint-model:latest <ARGS>
+docker run -v ${pwd}:/src dtr.fintlabs.no/jenkins/fint-graphql-cli:latest <ARGS>
 ```
 
 ### Source

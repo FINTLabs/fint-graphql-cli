@@ -2,13 +2,10 @@ package main
 
 import (
 	"fmt"
+	"github.com/FINTLabs/fint-graphql-cli/generate"
 	"os"
 
 	"github.com/FINTLabs/fint-graphql-cli/branches"
-	"github.com/FINTLabs/fint-graphql-cli/classes"
-	"github.com/FINTLabs/fint-graphql-cli/generate"
-	"github.com/FINTLabs/fint-graphql-cli/namespaces"
-	"github.com/FINTLabs/fint-graphql-cli/packages"
 	"github.com/FINTLabs/fint-graphql-cli/tags"
 	"github.com/codegangsta/cli"
 )
@@ -46,29 +43,21 @@ var GlobalFlags = []cli.Flag{
 }
 
 var Commands = []cli.Command{
+	/*
 	{
 		Name:   "printClasses",
 		Usage:  "list classes",
 		Action: classes.CmdPrintClasses,
 		Flags:  []cli.Flag{},
 	},
+	*/
 	{
 		Name:   "generate",
-		Usage:  "generates JAVA/CS models",
+		Usage:  "generates GraphQL schema, query resolvers, resolvers and services.",
 		Action: generate.CmdGenerate,
-		Flags: []cli.Flag{
-			cli.StringFlag{
-				Name:  "lang, l",
-				Value: "JAVA",
-				Usage: "the language to generate the code in - can be JAVA, CS or ALL",
-			},
-			cli.BoolFlag{
-				EnvVar: "",
-				Name:   "resource, r",
-				Usage:  "Generate resource classes.",
-			},
-		},
+		Flags:  []cli.Flag{},
 	},
+	/*
 	{
 		Name:   "listPackages",
 		Usage:  "list Java packages",
@@ -81,6 +70,7 @@ var Commands = []cli.Command{
 		Action: namespaces.CmdListNamespaces,
 		Flags:  []cli.Flag{},
 	},
+	*/
 	{
 		Name:   "listTags",
 		Usage:  "list tags",
