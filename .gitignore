@@ -1,0 +1,13 @@
+*.test
+.idea
+.DS_Store
+/java/
+/cs/
+*.xml
+build
+fint-graphql-cli.exe
+fint-graphql-cli
+*.orig
+.vscode/
+classes.txt
+graphql
