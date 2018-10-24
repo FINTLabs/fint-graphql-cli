@@ -2,9 +2,11 @@ package main
 
 import (
 	"fmt"
+	"os"
+
 	"github.com/FINTLabs/fint-graphql-cli/classes"
 	"github.com/FINTLabs/fint-graphql-cli/generate"
-	"os"
+	"github.com/FINTLabs/fint-graphql-cli/packages"
 
 	"github.com/FINTLabs/fint-graphql-cli/branches"
 	"github.com/FINTLabs/fint-graphql-cli/tags"
@@ -58,19 +60,19 @@ var Commands = []cli.Command{
 		Action: generate.CmdGenerate,
 		Flags:  []cli.Flag{},
 	},
-	/*
 	{
 		Name:   "listPackages",
-		Usage:  "list Java packages",
+		Usage:  "list Packages",
 		Action: packages.CmdListPackages,
 		Flags:  []cli.Flag{},
 	},
-	{
-		Name:   "listNamespaces",
-		Usage:  "list CS namespaces",
-		Action: namespaces.CmdListNamespaces,
-		Flags:  []cli.Flag{},
-	},
+	/*
+		{
+			Name:   "listNamespaces",
+			Usage:  "list CS namespaces",
+			Action: namespaces.CmdListNamespaces,
+			Flags:  []cli.Flag{},
+		},
 	*/
 	{
 		Name:   "listTags",

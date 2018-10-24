@@ -106,10 +106,13 @@ func generateGraphQlService(classes []*types.Class) {
 
 	fmt.Println("Generating GraphQL Service")
 
+	var resources []string
+
 	for _, c := range classes {
 		if !c.Abstract && c.Stereotype == "hovedklasse" && includePackage(c.Package) {
 			fmt.Printf("  > Creating service: %s.java\n", c.Name)
 			class := GetGraphQlService(c)
+			resources = append(resources, GetPackagePath(c.Package))
 			err := writeService(c.Package, c.Name, []byte(class))
 			if err != nil {
 				fmt.Printf("Unable to write file: %s", err)

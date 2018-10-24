@@ -21,7 +21,7 @@ public class {{ .Name }}Service {
 
 
         return webClient.get()
-                .uri(ResourceUrlBuilder.urlWithQueryParams("{{ getPathFromPackage .Package .Name}}", sinceTimeStamp))
+                .uri(ResourceUrlBuilder.urlWithQueryParams("{{ getPathFromPackage .Package }}/{{ lowerCase .Name }}", sinceTimeStamp))
                 .retrieve()
                 .bodyToMono({{ .Name }}Resources.class)
                 .block();

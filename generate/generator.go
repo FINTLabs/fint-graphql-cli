@@ -65,10 +65,7 @@ var funcMap = template.FuncMap{
 		}
 		return ""
 	},
-	"getPathFromPackage": func(p string, n string) string {
-		//"no.fint.model.administrasjon.personal" -> administrasjon/personal
-		return strings.Join(strings.Split(p, ".")[3:], "/") + "/" + strings.ToLower(n)
-	},
+	"getPathFromPackage": GetPackagePath,
 	"uniqueRelationTargets": func(input []types.Association) []types.Association {
 		u := make([]types.Association, 0, len(input))
 		m := make(map[string]bool)
@@ -90,6 +87,10 @@ var funcMap = template.FuncMap{
 		}
 		return "String"
 	},
+}
+
+func GetPackagePath(p string) string {
+	return strings.Join(strings.Split(p, ".")[3:], "/")
 }
 
 func GetGraphQlSchema(c *types.Class) string {
