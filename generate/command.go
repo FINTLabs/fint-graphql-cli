@@ -7,7 +7,6 @@ import (
 	"strings"
 
 	"github.com/FINTLabs/fint-graphql-cli/common/config"
-	"github.com/FINTLabs/fint-graphql-cli/common/document"
 	"github.com/FINTLabs/fint-graphql-cli/common/github"
 	"github.com/FINTLabs/fint-graphql-cli/common/parser"
 	"github.com/FINTLabs/fint-graphql-cli/common/types"
@@ -27,11 +26,13 @@ func CmdGenerate(c *cli.Context) {
 	repo := c.GlobalString("repo")
 	filename := c.GlobalString("filename")
 
+	classes, _, _, _ := parser.GetClasses(owner, repo, tag, filename, force)
+
 	setupGraphQlSchemaDirStructure()
-	generateGraphQlSchema(owner, repo, tag, filename, force)
-	generateGraphQlQueryResolver(owner, repo, tag, filename, force)
-	generateGraphQlService(owner, repo, tag, filename, force)
-	generateGraphQlResolver(owner, repo, tag, filename, force)
+	generateGraphQlSchema(classes)
+	generateGraphQlQueryResolver(classes)
+	generateGraphQlService(classes)
+	generateGraphQlResolver(classes)
 }
 
 func writeFile(path string, filename string, content []byte) error {
@@ -68,12 +69,9 @@ func writeResolver(pkg string, className string, content []byte) error {
 	return writeFile(path, fmt.Sprintf("%sResolver.java", className), []byte(content))
 }
 
-func generateGraphQlSchema(owner string, repo string, tag string, filename string, force bool) {
+func generateGraphQlSchema(classes []*types.Class) {
 
-	document.Get(owner, repo, tag, filename, force)
 	fmt.Println("Generating GraphQL Schema")
-
-	classes, _, _, _ := parser.GetClasses(owner, repo, tag, filename, force)
 
 	for _, c := range classes {
 		if !c.Abstract && includePackage(c.Package) {
@@ -88,14 +86,9 @@ func generateGraphQlSchema(owner string, repo string, tag string, filename strin
 
 }
 
-func generateGraphQlQueryResolver(owner string, repo string, tag string, filename string, force bool) {
+func generateGraphQlQueryResolver(classes []*types.Class) {
 
-	document.Get(owner, repo, tag, filename, force)
 	fmt.Println("Generating GraphQL Query Resolver")
-
-	//setupGraphQlSchemaDirStructure()
-
-	classes, _, _, _ := parser.GetClasses(owner, repo, tag, filename, force)
 
 	for _, c := range classes {
 		if !c.Abstract && c.Stereotype == "hovedklasse" && includePackage(c.Package) {
@@ -109,14 +102,9 @@ func generateGraphQlQueryResolver(owner string, repo string, tag string, filenam
 	}
 }
 
-func generateGraphQlService(owner string, repo string, tag string, filename string, force bool) {
+func generateGraphQlService(classes []*types.Class) {
 
-	document.Get(owner, repo, tag, filename, force)
 	fmt.Println("Generating GraphQL Service")
-
-	//setupGraphQlSchemaDirStructure()
-
-	classes, _, _, _ := parser.GetClasses(owner, repo, tag, filename, force)
 
 	for _, c := range classes {
 		if !c.Abstract && c.Stereotype == "hovedklasse" && includePackage(c.Package) {
@@ -130,14 +118,9 @@ func generateGraphQlService(owner string, repo string, tag string, filename stri
 	}
 }
 
-func generateGraphQlResolver(owner string, repo string, tag string, filename string, force bool) {
+func generateGraphQlResolver(classes []*types.Class) {
 
-	document.Get(owner, repo, tag, filename, force)
 	fmt.Println("Generating GraphQL Resolver")
-
-	//setupGraphQlSchemaDirStructure()
-
-	classes, _, _, _ := parser.GetClasses(owner, repo, tag, filename, force)
 
 	for _, c := range classes {
 		if !c.Abstract && c.Stereotype == "hovedklasse" && includePackage(c.Package) {

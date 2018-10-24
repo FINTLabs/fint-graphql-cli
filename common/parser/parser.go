@@ -13,7 +13,10 @@ import (
 )
 
 func GetClasses(owner string, repo string, tag string, filename string, force bool) ([]*types.Class, map[string]types.Import, map[string][]*types.Class, map[string][]*types.Class) {
+	fmt.Println("Fetching document ...")
 	doc := document.Get(owner, repo, tag, filename, force)
+
+	fmt.Print("Parsing ...")
 
 	var classes []*types.Class
 	// TODO BUG: packageMap and classMap fail for classes with the same name!
@@ -23,6 +26,9 @@ func GetClasses(owner string, repo string, tag string, filename string, force bo
 	csPackageClassMap := make(map[string][]*types.Class)
 
 	classElements := xmlquery.Find(doc, "//element[@type='Class']")
+
+	fmt.Print(".")
+
 	for _, c := range classElements {
 
 		properties := c.SelectElement("properties")
@@ -57,11 +63,11 @@ func GetClasses(owner string, repo string, tag string, filename string, force bo
 		classMap[class.Name] = class
 	}
 
+	fmt.Print(".")
+
 	packageMap["Date"] = types.Import{
 		Java: "java.util.Date",
 	}
-
-
 
 	for _, class := range classes {
 		class.Imports = getImports(class, packageMap)
@@ -79,6 +85,8 @@ func GetClasses(owner string, repo string, tag string, filename string, force bo
 		}
 	}
 
+	fmt.Print(".")
+
 	for _, class := range classes {
 		for _, a := range class.Attributes {
 			if typ, found := classMap[a.Type]; found {
@@ -89,6 +97,8 @@ func GetClasses(owner string, repo string, tag string, filename string, force bo
 		}
 	}
 
+	fmt.Print(".")
+
 	for _, class := range classes {
 		if len(class.Extends) > 0 {
 			if typ, found := classMap[class.Extends]; found {
@@ -98,12 +108,15 @@ func GetClasses(owner string, repo string, tag string, filename string, force bo
 		class.AttributesWithInheritance = getAttributesFromExtends(class, classMap)
 	}
 
+	fmt.Print(".")
+
 	for _, class := range classes {
 		for i, r := range class.Relations {
 			class.Relations[i].Stereotype = classMap[r.Target].Stereotype
 		}
 	}
 
+	fmt.Println(" done")
 	return classes, packageMap, javaPackageClassMap, csPackageClassMap
 }
 
@@ -370,7 +383,7 @@ func getAssociations(doc *xmlquery.Node, c *xmlquery.Node) []types.Association {
 			assoc.Target = replaceNO(rr.SelectElement("../model").SelectAttr("name"))
 			assoc.Multiplicity = rr.SelectElement("../type").SelectAttr("multiplicity")
 			assoc.Deprecated = rr.SelectElement("../../tags/tag[@name='DEPRECATED']") != nil
-			assoc.TargetPackage = getPackagePath(getClassByIdRef(rr.SelectElement("../../target").SelectAttr("idref"), doc),  doc)
+			assoc.TargetPackage = getPackagePath(getClassByIdRef(rr.SelectElement("../../target").SelectAttr("idref"), doc), doc)
 			assocs = append(assocs, assoc)
 		}
 	}
@@ -381,7 +394,7 @@ func getAssociations(doc *xmlquery.Node, c *xmlquery.Node) []types.Association {
 			assoc.Target = replaceNO(rl.SelectElement("../model").SelectAttr("name"))
 			assoc.Multiplicity = rl.SelectElement("../type").SelectAttr("multiplicity")
 			assoc.Deprecated = rl.SelectElement("../../tags/tag[@name='DEPRECATED']") != nil
-			assoc.TargetPackage = getPackagePath(getClassByIdRef(rl.SelectElement("../../source").SelectAttr("idref"), doc),  doc)
+			assoc.TargetPackage = getPackagePath(getClassByIdRef(rl.SelectElement("../../source").SelectAttr("idref"), doc), doc)
 			assocs = append(assocs, assoc)
 		}
 	}

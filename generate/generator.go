@@ -66,9 +66,8 @@ var funcMap = template.FuncMap{
 		return ""
 	},
 	"getPathFromPackage": func(p string, n string) string {
-		//"no.fint.model.administrasjon.personal"
-		s := strings.Replace(p, "no.fint.model.", "", -1)
-		return fmt.Sprintf("%s/%s", strings.Replace(s, ".", "/", -1), strings.ToLower(n))
+		//"no.fint.model.administrasjon.personal" -> administrasjon/personal
+		return strings.Join(strings.Split(p, ".")[3:], "/") + "/" + strings.ToLower(n)
 	},
 	"uniqueRelationTargets": func(input []types.Association) []types.Association {
 		u := make([]types.Association, 0, len(input))
