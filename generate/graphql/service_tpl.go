@@ -2,7 +2,7 @@ package graphql
 
 const SERVICE_TEMPLATE = `// Built from tag {{ .GitTag }}
 
-package no.fint.graphql.model.{{ lowerCase .Name}};
+package no.fint.graphql.model.{{ component .Package }}.{{ lowerCase .Name}};
 
 import no.fint.graphql.ResourceUrlBuilder;
 import {{resourcePkg .Package}}.{{ .Name }}Resource;

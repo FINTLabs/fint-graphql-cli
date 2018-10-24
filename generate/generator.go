@@ -45,6 +45,7 @@ var funcMap = template.FuncMap{
 		}
 		return typ
 	},
+	"component":      types.GetComponentName,
 	"graphqlType":    types.GetGraphQlType,
 	"lowerCase":      func(s string) string { return strings.ToLower(s) },
 	"upperCase":      func(s string) string { return strings.ToUpper(s) },

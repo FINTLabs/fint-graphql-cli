@@ -1,6 +1,9 @@
 package types
 
-import "fmt"
+import (
+	"fmt"
+	"strings"
+)
 
 const LIST_TEMPLATE = "List<%s>"
 
@@ -9,4 +12,8 @@ func getType(list bool, t string) string {
 		return fmt.Sprintf(LIST_TEMPLATE, t)
 	}
 	return t
+}
+
+func GetComponentName(pkg string) string {
+	return strings.ToLower(strings.Split(pkg, ".")[3])
 }

@@ -2,7 +2,7 @@ package graphql
 
 const RESOLVER_TEMPLATE = `// Built from tag {{ .GitTag }}
 
-package no.fint.graphql.model.{{ lowerCase .Name}};
+package no.fint.graphql.model.{{ component .Package }}.{{ lowerCase .Name}};
 
 import com.coxautodev.graphql.tools.GraphQLResolver;
 import no.fint.graphql.Links;
@@ -11,7 +11,7 @@ import no.fint.graphql.Links;
 
 {{ if $ur }}
 {{- range $i, $rel := $ur }}
-import no.fint.graphql.model.{{ lowerCase $rel.Target}}.{{ upperCaseFirst $rel.Target }}Service;
+import no.fint.graphql.model.{{ component $rel.TargetPackage }}.{{ lowerCase $rel.Target}}.{{ upperCaseFirst $rel.Target }}Service;
 {{- end }}
 {{ end }}
 
