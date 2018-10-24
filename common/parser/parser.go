@@ -99,8 +99,8 @@ func GetClasses(owner string, repo string, tag string, filename string, force bo
 	}
 
 	for _, class := range classes {
-		for _, r := range class.Relations {
-			r.Stereotype = classMap[r.Target].Stereotype
+		for i, r := range class.Relations {
+			class.Relations[i].Stereotype = classMap[r.Target].Stereotype
 		}
 	}
 
