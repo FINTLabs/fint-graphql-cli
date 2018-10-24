@@ -3,9 +3,10 @@ package generate
 import (
 	"bytes"
 	"fmt"
-	"github.com/FINTLabs/fint-graphql-cli/generate/graphql"
 	"strings"
 	"text/template"
+
+	"github.com/FINTLabs/fint-graphql-cli/generate/graphql"
 
 	"github.com/FINTLabs/fint-graphql-cli/common/types"
 )
@@ -73,9 +74,11 @@ var funcMap = template.FuncMap{
 		m := make(map[string]bool)
 
 		for _, val := range input {
-			if _, ok := m[val.Target]; !ok {
-				m[val.Target] = true
-				u = append(u, val)
+			if val.Stereotype == "hovedklasse" {
+				if _, ok := m[val.Target]; !ok {
+					m[val.Target] = true
+					u = append(u, val)
+				}
 			}
 		}
 
