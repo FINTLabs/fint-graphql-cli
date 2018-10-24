@@ -10,4 +10,4 @@ fint-graphql-cli
 *.orig
 .vscode/
 classes.txt
-graphql
+/graphql/
