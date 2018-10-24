@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"github.com/FINTLabs/fint-graphql-cli/classes"
 	"github.com/FINTLabs/fint-graphql-cli/generate"
 	"os"
 
@@ -43,14 +44,14 @@ var GlobalFlags = []cli.Flag{
 }
 
 var Commands = []cli.Command{
-	/*
+
 	{
 		Name:   "printClasses",
 		Usage:  "list classes",
 		Action: classes.CmdPrintClasses,
 		Flags:  []cli.Flag{},
 	},
-	*/
+
 	{
 		Name:   "generate",
 		Usage:  "generates GraphQL schema, query resolvers, resolvers and services.",

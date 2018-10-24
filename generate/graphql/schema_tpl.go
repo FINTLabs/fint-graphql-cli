@@ -13,7 +13,7 @@ type {{ .Name }} {
 {{ if .Relations }}
 	# Relations
 	{{- range $i, $rel := .Relations }}
-    {{ $rel.Name }}: {{ $rel.Target }}
+    {{ $rel.Name }}: {{ $rel | graphqlRelation }}
 	{{- end }}
 {{ end -}}
 }

@@ -72,7 +72,7 @@ func dumpClass(c *types.Class) {
 			if r.Deprecated {
 				s = "<<DEPRECATED>>"
 			}
-			fmt.Printf("    - %s: %s[%s] %s\n", r.Name, r.Target, r.Multiplicity, s)
+			fmt.Printf("    - %s: %s[%s]<<%s>> %s\n", r.Name, r.Target, r.Multiplicity, r.Stereotype, s)
 		}
 	}
 

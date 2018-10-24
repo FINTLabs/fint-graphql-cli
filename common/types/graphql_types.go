@@ -9,6 +9,7 @@ var GRAPHQL_TYPE_MAP = map[string]string{
 	"double":      "Double",
 	"long":        "Long",
 	"int":         "Int",
+	"referanse":   "String",
 }
 
 func GetGraphQlType(t string) string {

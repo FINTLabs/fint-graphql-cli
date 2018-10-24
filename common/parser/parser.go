@@ -98,6 +98,12 @@ func GetClasses(owner string, repo string, tag string, filename string, force bo
 		class.AttributesWithInheritance = getAttributesFromExtends(class, classMap)
 	}
 
+	for _, class := range classes {
+		for _, r := range class.Relations {
+			r.Stereotype = classMap[r.Target].Stereotype
+		}
+	}
+
 	return classes, packageMap, javaPackageClassMap, csPackageClassMap
 }
 

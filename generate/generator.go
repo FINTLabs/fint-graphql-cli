@@ -81,6 +81,12 @@ var funcMap = template.FuncMap{
 
 		return u
 	},
+	"graphqlRelation": func(t *types.Association) string {
+		if t.Stereotype == "hovedklasse" {
+			return t.Target
+		}
+		return "String"
+	},
 }
 
 func GetGraphQlSchema(c *types.Class) string {
