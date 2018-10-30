@@ -13,8 +13,12 @@ import (
 )
 
 func GetClasses(owner string, repo string, tag string, filename string, force bool) ([]*types.Class, map[string]types.Import, map[string][]*types.Class, map[string][]*types.Class) {
-	fmt.Println("Fetching document ...")
-	doc := document.Get(owner, repo, tag, filename, force)
+	fmt.Print("Fetching document ...")
+	doc, err := document.Get(owner, repo, tag, filename, force)
+	if err != nil {
+		return nil, nil, nil, nil
+	}
+	fmt.Println("ok")
 
 	fmt.Print("Parsing ...")
 
@@ -29,7 +33,11 @@ func GetClasses(owner string, repo string, tag string, filename string, force bo
 
 	fmt.Print(".")
 
-	for _, c := range classElements {
+	for i, c := range classElements {
+
+		if i%10 == 0 {
+			fmt.Print(".")
+		}
 
 		properties := c.SelectElement("properties")
 		class := new(types.Class)

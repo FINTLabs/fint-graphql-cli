@@ -12,7 +12,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.List;
 
-@Component
+@Component("{{component .Package}}{{.Name}}QueryResolver")
 public class {{ .Name }}QueryResolver implements GraphQLQueryResolver {
 
     @Autowired

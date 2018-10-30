@@ -87,10 +87,23 @@ var funcMap = template.FuncMap{
 		}
 		return "String"
 	},
+	"getEndpoint": func(r string) string { return "get" + strings.Title(GetEndpointName(r)) + "()" },
 }
 
 func GetPackagePath(p string) string {
 	return strings.Join(strings.Split(p, ".")[3:], "/")
+}
+
+func GetEndpointName(p string) string {
+	var r string
+	for i, s := range strings.Split(p, "/") {
+		if i == 0 {
+			r += s
+		} else {
+			r += strings.Title(s)
+		}
+	}
+	return r
 }
 
 func GetGraphQlSchema(c *types.Class) string {
@@ -107,6 +120,27 @@ func GetGraphQlService(c *types.Class) string {
 
 func GetGraphQlResolver(c *types.Class) string {
 	return getClass(c, graphql.RESOLVER_TEMPLATE)
+}
+
+func GetEndpoints(r []string) string {
+	var funcs = template.FuncMap{
+		"dots": func(s string) string { return strings.Replace(s, "/", ".", -1) },
+		"name": GetEndpointName,
+	}
+	tpl := template.New("class").Funcs(funcs)
+
+	parse, err := tpl.Parse(graphql.ENDPOINTS_TEMPLATE)
+
+	if err != nil {
+		panic(err)
+	}
+
+	var b bytes.Buffer
+	err = parse.Execute(&b, r)
+	if err != nil {
+		panic(err)
+	}
+	return b.String()
 }
 
 func getClass(c *types.Class, t string) string {

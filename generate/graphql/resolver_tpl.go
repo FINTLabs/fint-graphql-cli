@@ -26,25 +26,23 @@ import {{ resourcePkg $rel.TargetPackage }}.{{ $rel.Target }}Resource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-@Component
+@Component("{{component .Package}}{{.Name}}Resolver")
 public class {{ .Name }}Resolver implements GraphQLResolver<{{ .Name }}Resource> {
 
-	{{ if $ur }}
-	{{- range $i, $rel := $ur }}
-	@Autowired
-	private {{ $rel.Target }}Service {{ lowerCase $rel.Target}}Service;
-	{{ end }}
-	{{ end }}
+{{ if $ur -}}
+{{- range $i, $rel := $ur }}
+    @Autowired
+    private {{ $rel.Target }}Service {{ lowerCase $rel.Target}}Service;
+{{ end }}
+{{ end -}}
 
-
-	{{ if $ur }}
-	{{ $mainName := .Name }}
-	{{- range $i, $rel := $ur }}
-	public {{ $rel.Target}}Resource get{{ $rel.Target}}({{ $mainName }}Resource {{ lowerCase $mainName}}) {
-        return {{ lowerCase $rel.Target}}Service.get{{ $rel.Target}}Resource(Links.get({{ lowerCase $mainName}}, "{{ $rel.Name }}"));
+{{ range $i, $rel := .Relations -}}
+{{- if eq $rel.Stereotype "hovedklasse" }}
+    public {{ $rel.Target}}Resource get{{ $rel.Name | upperCaseFirst }}({{ $.Name }}Resource {{ lowerCase $.Name}}) {
+        return {{ lowerCase $rel.Target}}Service.get{{ $rel.Target}}Resource(Links.get({{ lowerCase $.Name}}.get{{ $rel.Name | upperCaseFirst }}()));
     }
-	{{ end }}
-	{{ end }}
+{{ end -}}
+{{- end }}
 }
 
 `

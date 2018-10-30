@@ -1,23 +1,33 @@
 package types
 
 var GRAPHQL_TYPE_MAP = map[string]string{
-	"string":      "String",
-	"boolean":     "Boolean",
-	"date":        "String",
-	"dateTime":    "String",
-	"float":       "Float",
-	"double":      "Double",
-	"long":        "Long",
-	"int":         "Int",
-	"referanse":   "String",
+	"string":    "String",
+	"boolean":   "Boolean",
+	"date":      "String",
+	"dateTime":  "String",
+	"float":     "Float",
+	"double":    "Double",
+	"long":      "Long",
+	"int":       "Int",
+	"referanse": "String",
 }
 
-func GetGraphQlType(t string) string {
+func GetGraphQlType(att *Attribute) string {
 
-	value, ok := GRAPHQL_TYPE_MAP[t]
+	result := att.Type
+
+	value, ok := GRAPHQL_TYPE_MAP[att.Type]
 	if ok {
-		return value
-	} else {
-		return t
+		result = value
 	}
+
+	if att.List {
+		result = "[" + result + "]"
+	}
+
+	if !att.Optional {
+		result = result + "!"
+	}
+
+	return result
 }

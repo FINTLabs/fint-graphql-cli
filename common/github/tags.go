@@ -17,6 +17,7 @@ func GetTagList(owner string, repo string) []string {
 
 	if err != nil {
 		fmt.Printf("Unable to get tag list from GitHub: %s", err)
+		return nil
 	}
 
 	for _, tag := range tags {
@@ -33,6 +34,7 @@ func GetLatest(owner string, repo string) string {
 
 	if err != nil {
 		fmt.Printf("Unable to get latest release from GitHub: %s", err)
+		return ""
 	}
 
 	return release.GetTagName()
