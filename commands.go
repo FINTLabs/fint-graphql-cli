@@ -58,7 +58,12 @@ var Commands = []cli.Command{
 		Name:   "generate",
 		Usage:  "generates GraphQL schema, query resolvers, resolvers and services.",
 		Action: generate.CmdGenerate,
-		Flags:  []cli.Flag{},
+		Flags: []cli.Flag{
+			cli.StringSliceFlag{
+				Name:  "exclude, x",
+				Usage: "Classes to exclude from the generated schema and classes.",
+			},
+		},
 	},
 	{
 		Name:   "listPackages",

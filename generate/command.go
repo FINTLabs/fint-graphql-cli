@@ -28,8 +28,41 @@ func CmdGenerate(c *cli.Context) {
 	owner := c.GlobalString("owner")
 	repo := c.GlobalString("repo")
 	filename := c.GlobalString("filename")
+	exclude := c.StringSlice("exclude")
 
-	classes, _, _, _ := parser.GetClasses(owner, repo, tag, filename, force)
+	classesOrig, _, _, _ := parser.GetClasses(owner, repo, tag, filename, force)
+	var classes []*types.Class
+	if len(exclude) == 0 {
+		classes = classesOrig
+	} else {
+		for _, class := range classesOrig {
+			for _, s := range exclude {
+				if !strings.Contains(class.Name, s) {
+					var rel []types.Association
+					for _, r := range class.Relations {
+						if !strings.Contains(r.Target, s) {
+							rel = append(rel, r)
+						} else {
+							fmt.Printf("Excluding %s.%s from %s.%s\n", r.TargetPackage, r.Target, class.Package, class.Name)
+						}
+					}
+					class.Relations = rel
+					var att []types.Attribute
+					for _, a := range class.Attributes {
+						if !strings.Contains(a.Type, s) {
+							att = append(att, a)
+						} else {
+							fmt.Printf("Excluding %s (%s) from %s.%s\n", a.Name, a.Type, class.Package, class.Name)
+						}
+					}
+					class.Attributes = att
+					classes = append(classes, class)
+				} else {
+					fmt.Printf("Excluding class %s.%s\n", class.Package, class.Name)
+				}
+			}
+		}
+	}
 
 	setupGraphQlSchemaDirStructure()
 	generateGraphQlSchema(classes)
