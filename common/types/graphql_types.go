@@ -3,8 +3,8 @@ package types
 var GRAPHQL_TYPE_MAP = map[string]string{
 	"string":    "String",
 	"boolean":   "Boolean",
-	"date":      "String",
-	"dateTime":  "String",
+	"date":      "Date",
+	"dateTime":  "Date",
 	"float":     "Float",
 	"double":    "Double",
 	"long":      "Long",
