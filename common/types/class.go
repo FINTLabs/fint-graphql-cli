@@ -19,4 +19,5 @@ type Class struct {
 	Identifiable              bool
 	GitTag                    string
 	Stereotype                string
+	Identifiers               []Identifier
 }

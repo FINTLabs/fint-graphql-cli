@@ -50,6 +50,13 @@ func dumpClass(c *types.Class) {
 		fmt.Printf("    - %s\n", u)
 	}
 
+	if len(c.Identifiers) > 0 {
+		fmt.Println("  Identifiers:")
+		for _, i := range c.Identifiers {
+			fmt.Printf("    - %s\n", i.Name)
+		}
+	}
+
 	if len(c.Attributes) > 0 {
 		fmt.Println("  Attributes:")
 		for _, a := range c.Attributes {
