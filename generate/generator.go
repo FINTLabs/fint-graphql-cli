@@ -123,6 +123,23 @@ func GetGraphQlResolver(c *types.Class) string {
 	return getClass(c, graphql.RESOLVER_TEMPLATE)
 }
 
+func GetGraphQlRootSchema(classes []*types.Class) string {
+	tpl := template.New("schema").Funcs(funcMap)
+
+	parse, err := tpl.Parse(graphql.ROOT_TEMPLATE)
+
+	if err != nil {
+		panic(err)
+	}
+
+	var b bytes.Buffer
+	err = parse.Execute(&b, classes)
+	if err != nil {
+		panic(err)
+	}
+	return b.String()
+}
+
 func GetEndpoints(r []string) string {
 	var funcs = template.FuncMap{
 		"dots": func(s string) string { return strings.Replace(s, "/", ".", -1) },
