@@ -382,6 +382,11 @@ func getAssociationsFromExtends(doc *xmlquery.Node, c *xmlquery.Node) ([]types.A
 	return assocs, nil
 }
 
+func getMultiplicity(multiplicity string) (bool, bool) {
+	return strings.HasPrefix(multiplicity, "0"),
+		strings.HasSuffix(multiplicity, "*")
+}
+
 func getAssociations(doc *xmlquery.Node, c *xmlquery.Node) []types.Association {
 	var assocs []types.Association
 	for _, rr := range xmlquery.Find(doc, fmt.Sprintf("//connectors/connector/properties[@ea_type='Association']/../source[@idref='%s']/../target/role", c.SelectAttr("idref"))) {
@@ -389,7 +394,7 @@ func getAssociations(doc *xmlquery.Node, c *xmlquery.Node) []types.Association {
 			assoc := types.Association{}
 			assoc.Name = replaceNO(rr.SelectAttr("name"))
 			assoc.Target = replaceNO(rr.SelectElement("../model").SelectAttr("name"))
-			assoc.Multiplicity = rr.SelectElement("../type").SelectAttr("multiplicity")
+			assoc.Optional, assoc.List = getMultiplicity(rr.SelectElement("../type").SelectAttr("multiplicity"))
 			assoc.Deprecated = rr.SelectElement("../../tags/tag[@name='DEPRECATED']") != nil
 			assoc.TargetPackage = getPackagePath(getClassByIdRef(rr.SelectElement("../../target").SelectAttr("idref"), doc), doc)
 			assocs = append(assocs, assoc)
@@ -400,7 +405,7 @@ func getAssociations(doc *xmlquery.Node, c *xmlquery.Node) []types.Association {
 			assoc := types.Association{}
 			assoc.Name = replaceNO(rl.SelectAttr("name"))
 			assoc.Target = replaceNO(rl.SelectElement("../model").SelectAttr("name"))
-			assoc.Multiplicity = rl.SelectElement("../type").SelectAttr("multiplicity")
+			assoc.Optional, assoc.List = getMultiplicity(rl.SelectElement("../type").SelectAttr("multiplicity"))
 			assoc.Deprecated = rl.SelectElement("../../tags/tag[@name='DEPRECATED']") != nil
 			assoc.TargetPackage = getPackagePath(getClassByIdRef(rl.SelectElement("../../source").SelectAttr("idref"), doc), doc)
 			assocs = append(assocs, assoc)

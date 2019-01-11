@@ -7,7 +7,7 @@ RUN go install -v -ldflags "-X main.Version=${VERSION}"
 RUN /go/bin/fint-graphql-cli --version
 
 FROM gcr.io/distroless/static
-COPY --from=builder /go/bin/fint-graphql-cli /usr/bin/fint-graphql-cli
-WORKDIR /src
 VOLUME [ "/src" ]
+WORKDIR /src
+COPY --from=builder /go/bin/fint-graphql-cli /usr/bin/fint-graphql-cli
 ENTRYPOINT [ "/usr/bin/fint-graphql-cli" ]

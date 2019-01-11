@@ -45,13 +45,14 @@ var funcMap = template.FuncMap{
 		}
 		return typ
 	},
-	"component":      types.GetComponentName,
-	"graphqlType":    types.GetGraphQlType,
-	"lowerCase":      func(s string) string { return strings.ToLower(s) },
-	"upperCase":      func(s string) string { return strings.ToUpper(s) },
-	"upperCaseFirst": func(s string) string { return strings.Title(s) },
-	"getter":         func(s string) string { return "get" + strings.Title(s) + "()" },
-	"baseType":       func(s string) string { return strings.Replace(s, "Resource", "", -1) },
+	"component":       types.GetComponentName,
+	"graphqlType":     types.GetGraphQlType,
+	"graphqlRelation": types.GetGraphQlRelationType,
+	"lowerCase":       func(s string) string { return strings.ToLower(s) },
+	"upperCase":       func(s string) string { return strings.ToUpper(s) },
+	"upperCaseFirst":  func(s string) string { return strings.Title(s) },
+	"getter":          func(s string) string { return "get" + strings.Title(s) + "()" },
+	"baseType":        func(s string) string { return strings.Replace(s, "Resource", "", -1) },
 	"assignResource": func(typ string, att string) string {
 		if strings.HasPrefix(typ, "List<") {
 			inner := strings.TrimSuffix(strings.TrimPrefix(typ, "List<"), ">")
@@ -80,12 +81,6 @@ var funcMap = template.FuncMap{
 		}
 
 		return u
-	},
-	"graphqlRelation": func(t *types.Association) string {
-		if t.Stereotype == "hovedklasse" {
-			return t.Target
-		}
-		return "String"
 	},
 	"getEndpoint": func(r string) string { return "get" + strings.Title(GetEndpointName(r)) + "()" },
 }
