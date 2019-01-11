@@ -5,6 +5,7 @@ const RESOLVER_TEMPLATE = `// Built from tag {{ .GitTag }}
 package no.fint.graphql.model.{{ component .Package }}.{{ lowerCase .Name}};
 
 import com.coxautodev.graphql.tools.GraphQLResolver;
+import graphql.schema.DataFetchingEnvironment;
 import no.fint.graphql.Links;
 
 {{ $ur := uniqueRelationTargets .Relations}}
@@ -38,8 +39,10 @@ public class {{ .Name }}Resolver implements GraphQLResolver<{{ .Name }}Resource>
 
 {{ range $i, $rel := .Relations -}}
 {{- if eq $rel.Stereotype "hovedklasse" }}
-    public {{ $rel.Target}}Resource get{{ $rel.Name | upperCaseFirst }}({{ $.Name }}Resource {{ lowerCase $.Name}}) {
-        return {{ lowerCase $rel.Target}}Service.get{{ $rel.Target}}Resource(Links.get({{ lowerCase $.Name}}.get{{ $rel.Name | upperCaseFirst }}()));
+    public {{ $rel.Target}}Resource get{{ $rel.Name | upperCaseFirst }}({{ $.Name }}Resource {{ lowerCase $.Name}}, DataFetchingEnvironment dfe) {
+        return {{ lowerCase $rel.Target}}Service.get{{ $rel.Target}}Resource(
+            Links.get({{ lowerCase $.Name}}.get{{ $rel.Name | upperCaseFirst }}()),
+            dfe);
     }
 {{ end -}}
 {{- end }}

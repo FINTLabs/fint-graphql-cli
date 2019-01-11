@@ -69,6 +69,7 @@ func CmdGenerate(c *cli.Context) {
 	generateGraphQlQueryResolver(classes)
 	generateGraphQlService(classes)
 	generateGraphQlResolver(classes)
+	fmt.Println("Done!")
 }
 
 func writeFile(path string, filename string, content []byte) error {
