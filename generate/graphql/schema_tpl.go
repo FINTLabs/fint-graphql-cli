@@ -6,7 +6,7 @@ type {{ .Name }} {
 {{- if .AttributesWithInheritance }}
 	# Attributes
     {{- range $att := .AttributesWithInheritance }}
-    {{ $att.Name }}: {{ graphqlType $att }}
+    {{ $att.Name }}: {{ $att | graphqlType }}
     {{- end }}
 {{- end }}
 

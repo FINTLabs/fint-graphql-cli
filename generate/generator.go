@@ -48,11 +48,17 @@ var funcMap = template.FuncMap{
 	"component":       types.GetComponentName,
 	"graphqlType":     types.GetGraphQlType,
 	"graphqlRelation": types.GetGraphQlRelationType,
-	"lowerCase":       func(s string) string { return strings.ToLower(s) },
-	"upperCase":       func(s string) string { return strings.ToUpper(s) },
-	"upperCaseFirst":  func(s string) string { return strings.Title(s) },
-	"getter":          func(s string) string { return "get" + strings.Title(s) + "()" },
-	"baseType":        func(s string) string { return strings.Replace(s, "Resource", "", -1) },
+	"relTargetType": func(a *types.Association) string {
+		if a.List {
+			return fmt.Sprintf("List<%sResource>", a.Target)
+		}
+		return a.Target + "Resource"
+	},
+	"lowerCase":      func(s string) string { return strings.ToLower(s) },
+	"upperCase":      func(s string) string { return strings.ToUpper(s) },
+	"upperCaseFirst": func(s string) string { return strings.Title(s) },
+	"getter":         func(s string) string { return "get" + strings.Title(s) + "()" },
+	"baseType":       func(s string) string { return strings.Replace(s, "Resource", "", -1) },
 	"assignResource": func(typ string, att string) string {
 		if strings.HasPrefix(typ, "List<") {
 			inner := strings.TrimSuffix(strings.TrimPrefix(typ, "List<"), ">")
