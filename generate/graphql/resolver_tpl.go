@@ -26,6 +26,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Component("{{component .Package}}{{.Name}}Resolver")
@@ -41,14 +42,15 @@ public class {{ .Name }}Resolver implements GraphQLResolver<{{ .Name }}Resource>
 {{- if eq $rel.Stereotype "hovedklasse" }}
     public {{ $rel | relTargetType }} get{{ $rel.Name | upperCaseFirst }}({{ $.Name }}Resource {{ lowerCase $.Name}}, DataFetchingEnvironment dfe) {
         return {{ lowerCase $.Name}}.get{{ $rel.Name | upperCaseFirst }}()
-            .stream()
-            .map(Link::getHref)
-            .map(l -> {{ lowerCase $rel.Target}}Service.get{{ $rel.Target}}Resource(l, dfe))
-            {{ if $rel.List -}}
-                .collect(Collectors.toList());
-            {{- else -}}
-                .findFirst().orElse(null);
-            {{- end }}
+                .stream()
+                .map(Link::getHref)
+                .map(l -> {{ lowerCase $rel.Target}}Service.get{{ $rel.Target}}Resource(l, dfe))
+                .filter(Objects::nonNull)
+                {{ if $rel.List -}}
+                    .collect(Collectors.toList());
+                {{- else -}}
+                    .findFirst().orElse(null);
+                {{- end }}
     }
 {{ end -}}
 {{- end }}
