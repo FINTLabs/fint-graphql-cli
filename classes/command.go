@@ -72,6 +72,21 @@ func dumpClass(c *types.Class) {
 		}
 	}
 
+	if len(c.InheritedAttributes) > 0 {
+		fmt.Println("  Inherited Attributes:")
+		for _, a := range c.InheritedAttributes {
+			dep := ""
+			if a.Deprecated {
+				dep = "<<DEPRECATED>>"
+			}
+			if a.List {
+				fmt.Printf("    - %s: List<%s> [%s] %s\n", a.Name, a.Type, a.Owner, dep)
+			} else {
+				fmt.Printf("    - %s: %s [%s] %s\n", a.Name, a.Type, a.Owner, dep)
+			}
+		}
+	}
+
 	if len(c.Relations) > 0 {
 		fmt.Println("  Relations:")
 		for _, r := range c.Relations {

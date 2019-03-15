@@ -1,7 +1,6 @@
 package graphql
 
-const RESOLVER_TEMPLATE = `// Built from tag {{ .GitTag }}
-
+const RESOLVER_TEMPLATE = `
 package no.fint.graphql.model.{{ component .Package }}.{{ lowerCase .Name}};
 
 import com.coxautodev.graphql.tools.GraphQLResolver;

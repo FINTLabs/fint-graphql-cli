@@ -1,6 +1,7 @@
 package graphql
 
-const ROOT_TEMPLATE = `# java.util.Date implementation
+const ROOT_TEMPLATE = `
+# java.util.Date implementation
 scalar Date
 
 type Query {

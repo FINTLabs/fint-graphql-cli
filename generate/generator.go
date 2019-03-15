@@ -45,8 +45,11 @@ var funcMap = template.FuncMap{
 		}
 		return typ
 	},
-	"component":       types.GetComponentName,
-	"graphqlType":     types.GetGraphQlType,
+	"component":   types.GetComponentName,
+	"graphqlType": types.GetGraphQlType,
+	"graphqlTypeInh": func(a *types.InheritedAttribute) string {
+		return types.GetGraphQlType(&a.Attribute)
+	},
 	"graphqlRelation": types.GetGraphQlRelationType,
 	"relTargetType": func(a *types.Association) string {
 		if a.List {

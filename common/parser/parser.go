@@ -53,7 +53,6 @@ func GetClasses(owner string, repo string, tag string, filename string, force bo
 		class.Stereotype = properties.SelectAttr("stereotype")
 		class.Documentation = properties.SelectAttr("documentation")
 		class.Deprecated = c.SelectElement("tags/tag[@name='DEPRECATED']") != nil
-		class.GitTag = tag
 
 		if len(class.Stereotype) == 0 {
 			if class.Abstract {
@@ -114,7 +113,7 @@ func GetClasses(owner string, repo string, tag string, filename string, force bo
 				class.ExtendsResource = typ.Resource || len(typ.Resources) > 0
 			}
 		}
-		class.AttributesWithInheritance = getAttributesFromExtends(class, classMap)
+		class.InheritedAttributes = getAttributesFromExtends(class, classMap)
 	}
 
 	fmt.Print(".")
@@ -134,24 +133,33 @@ func getClassByIdRef(idref string, doc *xmlquery.Node) *xmlquery.Node {
 	return result[0]
 }
 
-func getAttributesFromExtends(class *types.Class, classMap map[string]*types.Class) []types.Attribute {
+func getAttributesFromExtends(class *types.Class, classMap map[string]*types.Class) []types.InheritedAttribute {
+
+	var result []types.InheritedAttribute
 
 	if len(class.Extends) > 0 {
 		extendedClass := classMap[class.Extends]
-		attrs := extendedClass.Attributes
-		if len(class.Attributes) > 0 {
-			attrs = append(attrs, class.Attributes...)
+		for _, a := range extendedClass.Attributes {
+			var att = types.InheritedAttribute{
+				Owner:     extendedClass.Name,
+				Attribute: a,
+			}
+			result = append(result, att)
 		}
 
 		for len(extendedClass.Extends) > 0 {
 			extendedClass = classMap[extendedClass.Extends]
-			attrs = append(attrs, extendedClass.Attributes...)
+			for _, a := range extendedClass.Attributes {
+				var att = types.InheritedAttribute{
+					Owner:     extendedClass.Name,
+					Attribute: a,
+				}
+				result = append(result, att)
+			}
 		}
-
-		return attrs
 	}
 
-	return class.Attributes
+	return result
 
 }
 

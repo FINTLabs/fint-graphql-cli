@@ -1,7 +1,6 @@
 package graphql
 
-const SERVICE_TEMPLATE = `// Built from tag {{ .GitTag }}
-
+const SERVICE_TEMPLATE = `
 package no.fint.graphql.model.{{ component .Package }}.{{ lowerCase .Name}};
 
 import graphql.schema.DataFetchingEnvironment;

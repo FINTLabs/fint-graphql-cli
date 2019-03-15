@@ -7,3 +7,8 @@ type Attribute struct {
 	Optional   bool
 	Deprecated bool
 }
+
+type InheritedAttribute struct {
+	Owner string
+	Attribute
+}

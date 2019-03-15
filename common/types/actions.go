@@ -5,5 +5,4 @@ type Action struct {
 	Package   string
 	Namespace string
 	Classes   []string
-	GitTag   string
 }
