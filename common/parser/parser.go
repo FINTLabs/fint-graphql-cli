@@ -82,6 +82,7 @@ func GetClasses(owner string, repo string, tag string, filename string, force bo
 		class.Using = getUsing(class, packageMap)
 		class.Identifiable = identifiableFromExtends(class, classMap)
 		class.Resource = isResource(class, classMap)
+		class.Identifiers = getIdentifiers(class, classMap)
 		javaPackageClassMap[class.Package] = append(javaPackageClassMap[class.Package], class)
 		csPackageClassMap[class.Namespace] = append(csPackageClassMap[class.Namespace], class)
 		if len(class.Stereotype) == 0 {
@@ -124,7 +125,7 @@ func GetClasses(owner string, repo string, tag string, filename string, force bo
 		}
 	}
 
-	fmt.Println(" done")
+	fmt.Println(". done")
 	return classes, packageMap, javaPackageClassMap, csPackageClassMap
 }
 
@@ -184,6 +185,25 @@ func identifiable(attribs []types.Attribute) bool {
 
 	return false
 
+}
+
+func getIdentifiers(class *types.Class, classMap map[string]*types.Class) []types.Identifier {
+	var identifiers []types.Identifier
+
+	for _, a := range class.Attributes {
+		if a.Type == "Identifikator" {
+			identifier := types.Identifier{}
+			identifier.Name = a.Name
+			identifier.Optional = a.Optional
+			identifiers = append(identifiers, identifier)
+		}
+	}
+
+	if len(class.Extends) > 0 {
+		identifiers = append(identifiers, getIdentifiers(classMap[class.Extends], classMap)...)
+	}
+
+	return identifiers
 }
 
 func getImports(c *types.Class, imports map[string]types.Import) []string {
@@ -382,6 +402,11 @@ func getAssociationsFromExtends(doc *xmlquery.Node, c *xmlquery.Node) ([]types.A
 	return assocs, nil
 }
 
+func getMultiplicity(multiplicity string) (bool, bool) {
+	return strings.HasPrefix(multiplicity, "0"),
+		strings.HasSuffix(multiplicity, "*")
+}
+
 func getAssociations(doc *xmlquery.Node, c *xmlquery.Node) []types.Association {
 	var assocs []types.Association
 	for _, rr := range xmlquery.Find(doc, fmt.Sprintf("//connectors/connector/properties[@ea_type='Association']/../source[@idref='%s']/../target/role", c.SelectAttr("idref"))) {
@@ -389,7 +414,7 @@ func getAssociations(doc *xmlquery.Node, c *xmlquery.Node) []types.Association {
 			assoc := types.Association{}
 			assoc.Name = replaceNO(rr.SelectAttr("name"))
 			assoc.Target = replaceNO(rr.SelectElement("../model").SelectAttr("name"))
-			assoc.Multiplicity = rr.SelectElement("../type").SelectAttr("multiplicity")
+			assoc.Optional, assoc.List = getMultiplicity(rr.SelectElement("../type").SelectAttr("multiplicity"))
 			assoc.Deprecated = rr.SelectElement("../../tags/tag[@name='DEPRECATED']") != nil
 			assoc.TargetPackage = getPackagePath(getClassByIdRef(rr.SelectElement("../../target").SelectAttr("idref"), doc), doc)
 			assocs = append(assocs, assoc)
@@ -400,7 +425,7 @@ func getAssociations(doc *xmlquery.Node, c *xmlquery.Node) []types.Association {
 			assoc := types.Association{}
 			assoc.Name = replaceNO(rl.SelectAttr("name"))
 			assoc.Target = replaceNO(rl.SelectElement("../model").SelectAttr("name"))
-			assoc.Multiplicity = rl.SelectElement("../type").SelectAttr("multiplicity")
+			assoc.Optional, assoc.List = getMultiplicity(rl.SelectElement("../type").SelectAttr("multiplicity"))
 			assoc.Deprecated = rl.SelectElement("../../tags/tag[@name='DEPRECATED']") != nil
 			assoc.TargetPackage = getPackagePath(getClassByIdRef(rl.SelectElement("../../source").SelectAttr("idref"), doc), doc)
 			assocs = append(assocs, assoc)

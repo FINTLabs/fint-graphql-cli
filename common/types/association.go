@@ -5,6 +5,7 @@ type Association struct {
 	Target        string
 	TargetPackage string
 	Deprecated    bool
-	Multiplicity  string
+	Optional      bool
+	List          bool
 	Stereotype    string
 }

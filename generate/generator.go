@@ -45,8 +45,15 @@ var funcMap = template.FuncMap{
 		}
 		return typ
 	},
-	"component":      types.GetComponentName,
-	"graphqlType":    types.GetGraphQlType,
+	"component":       types.GetComponentName,
+	"graphqlType":     types.GetGraphQlType,
+	"graphqlRelation": types.GetGraphQlRelationType,
+	"relTargetType": func(a *types.Association) string {
+		if a.List {
+			return fmt.Sprintf("List<%sResource>", a.Target)
+		}
+		return a.Target + "Resource"
+	},
 	"lowerCase":      func(s string) string { return strings.ToLower(s) },
 	"upperCase":      func(s string) string { return strings.ToUpper(s) },
 	"upperCaseFirst": func(s string) string { return strings.Title(s) },
@@ -81,12 +88,6 @@ var funcMap = template.FuncMap{
 
 		return u
 	},
-	"graphqlRelation": func(t *types.Association) string {
-		if t.Stereotype == "hovedklasse" {
-			return t.Target
-		}
-		return "String"
-	},
 	"getEndpoint": func(r string) string { return "get" + strings.Title(GetEndpointName(r)) + "()" },
 }
 
@@ -120,6 +121,23 @@ func GetGraphQlService(c *types.Class) string {
 
 func GetGraphQlResolver(c *types.Class) string {
 	return getClass(c, graphql.RESOLVER_TEMPLATE)
+}
+
+func GetGraphQlRootSchema(classes []*types.Class) string {
+	tpl := template.New("schema").Funcs(funcMap)
+
+	parse, err := tpl.Parse(graphql.ROOT_TEMPLATE)
+
+	if err != nil {
+		panic(err)
+	}
+
+	var b bytes.Buffer
+	err = parse.Execute(&b, classes)
+	if err != nil {
+		panic(err)
+	}
+	return b.String()
 }
 
 func GetEndpoints(r []string) string {

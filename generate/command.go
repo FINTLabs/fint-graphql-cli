@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"io/ioutil"
 	"os"
+	"sort"
 	"strings"
 
 	"github.com/FINTLabs/fint-graphql-cli/common/config"
@@ -110,6 +111,8 @@ func generateGraphQlSchema(classes []*types.Class) {
 
 	fmt.Println("Generating GraphQL Schema")
 
+	var roots []*types.Class
+
 	for _, c := range classes {
 		if !c.Abstract && includePackage(c.Package) {
 			fmt.Printf("  > Creating schema: %s.graphqls\n", c.Name)
@@ -118,9 +121,28 @@ func generateGraphQlSchema(classes []*types.Class) {
 			if err != nil {
 				fmt.Printf("Unable to write file: %s", err)
 			}
+			if c.Stereotype == "hovedklasse" && c.Identifiable && !strings.Contains(c.Package, "kodeverk") {
+				include := false
+				for _, i := range c.Identifiers {
+					include = include || !i.Optional
+				}
+				if include {
+					roots = append(roots, c)
+				}
+			}
 		}
 	}
 
+	fmt.Println("  > Creating schema: root.graphqls")
+	sort.Slice(roots, func(i, j int) bool {
+		return roots[i].Name < roots[j].Name
+	})
+
+	schema := GetGraphQlRootSchema(roots)
+	err := writeFile(config.GRAPHQL_BASE_PATH+"/schema", "root.graphqls", []byte(schema))
+	if err != nil {
+		fmt.Printf("Unable to write file: %s", err)
+	}
 }
 
 func generateGraphQlQueryResolver(classes []*types.Class) {

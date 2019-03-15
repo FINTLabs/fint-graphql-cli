@@ -6,30 +6,31 @@ package no.fint.graphql.model.{{ component .Package }}.{{ lowerCase .Name}};
 
 import com.coxautodev.graphql.tools.GraphQLResolver;
 import graphql.schema.DataFetchingEnvironment;
-import no.fint.graphql.Links;
 
-{{ $ur := uniqueRelationTargets .Relations}}
-
-{{ if $ur }}
-{{- range $i, $rel := $ur }}
+{{ $ur := uniqueRelationTargets .Relations -}}
+{{- if $ur -}}
+{{- range $i, $rel := $ur -}}
 import no.fint.graphql.model.{{ component $rel.TargetPackage }}.{{ lowerCase $rel.Target}}.{{ upperCaseFirst $rel.Target }}Service;
+{{ end -}}
 {{- end }}
-{{ end }}
 
+import no.fint.model.resource.Link;
 import {{resourcePkg .Package}}.{{ .Name}}Resource;
-
-{{ if $ur }}
+{{- if $ur -}}
 {{- range $i, $rel := $ur }}
 import {{ resourcePkg $rel.TargetPackage }}.{{ $rel.Target }}Resource;
+{{- end -}}
 {{- end }}
-{{ end }}
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
+
 @Component("{{component .Package}}{{.Name}}Resolver")
 public class {{ .Name }}Resolver implements GraphQLResolver<{{ .Name }}Resource> {
-
 {{ if $ur -}}
 {{- range $i, $rel := $ur }}
     @Autowired
@@ -39,10 +40,17 @@ public class {{ .Name }}Resolver implements GraphQLResolver<{{ .Name }}Resource>
 
 {{ range $i, $rel := .Relations -}}
 {{- if eq $rel.Stereotype "hovedklasse" }}
-    public {{ $rel.Target}}Resource get{{ $rel.Name | upperCaseFirst }}({{ $.Name }}Resource {{ lowerCase $.Name}}, DataFetchingEnvironment dfe) {
-        return {{ lowerCase $rel.Target}}Service.get{{ $rel.Target}}Resource(
-            Links.get({{ lowerCase $.Name}}.get{{ $rel.Name | upperCaseFirst }}()),
-            dfe);
+    public {{ $rel | relTargetType }} get{{ $rel.Name | upperCaseFirst }}({{ $.Name }}Resource {{ lowerCase $.Name}}, DataFetchingEnvironment dfe) {
+        return {{ lowerCase $.Name}}.get{{ $rel.Name | upperCaseFirst }}()
+                .stream()
+                .map(Link::getHref)
+                .map(l -> {{ lowerCase $rel.Target}}Service.get{{ $rel.Target}}Resource(l, dfe))
+                .filter(Objects::nonNull)
+                {{ if $rel.List -}}
+                    .collect(Collectors.toList());
+                {{- else -}}
+                    .findFirst().orElse(null);
+                {{- end }}
     }
 {{ end -}}
 {{- end }}

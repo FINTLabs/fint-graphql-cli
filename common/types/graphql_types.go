@@ -31,3 +31,21 @@ func GetGraphQlType(att *Attribute) string {
 
 	return result
 }
+
+func GetGraphQlRelationType(rel *Association) string {
+	if rel.Stereotype != "hovedklasse" {
+		return "[String]"
+	}
+
+	result := rel.Target
+
+	if rel.List {
+		result = "[" + result + "]"
+	}
+
+	if !rel.Optional {
+		result = result + "!"
+	}
+
+	return result
+}

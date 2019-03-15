@@ -50,6 +50,13 @@ func dumpClass(c *types.Class) {
 		fmt.Printf("    - %s\n", u)
 	}
 
+	if len(c.Identifiers) > 0 {
+		fmt.Println("  Identifiers:")
+		for _, i := range c.Identifiers {
+			fmt.Printf("    - %s\n", i.Name)
+		}
+	}
+
 	if len(c.Attributes) > 0 {
 		fmt.Println("  Attributes:")
 		for _, a := range c.Attributes {
@@ -72,7 +79,16 @@ func dumpClass(c *types.Class) {
 			if r.Deprecated {
 				s = "<<DEPRECATED>>"
 			}
-			fmt.Printf("    - %s: %s[%s] <<%s>> %s\n", r.Name, r.Target, r.Multiplicity, r.Stereotype, s)
+			m := ""
+			if r.Optional && r.List {
+				m = "0..*"
+			} else if r.List {
+				m = "1..*"
+			} else {
+				m = "1"
+			}
+
+			fmt.Printf("    - %s: %s[%s] <<%s>> %s\n", r.Name, r.Target, m, r.Stereotype, s)
 		}
 	}
 
