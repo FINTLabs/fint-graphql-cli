@@ -20,9 +20,12 @@ pipeline {
                     VERSION = TAG_NAME[1..-1]
                 }
                 sh "echo Version is ${VERSION}"
-                sh "docker build --tag dtr.fintlabs.no/jenkins/fint-graphql-cli:${VERSION} --build-arg VERSION=${VERSION} ."
-                withDockerRegistry([credentialsId: 'dtr-fintlabs-no', url: 'https://dtr.fintlabs.no']) {
-                    sh "docker push dtr.fintlabs.no/jenkins/fint-graphql-cli:${VERSION}"
+                sh "docker build --tag ${GIT_COMMIT} --build-arg VERSION=${VERSION} ."
+                sh "docker tag ${GIT_COMMIT} fint/graphql-cli:${VERSION}"
+                sh "docker tag ${GIT_COMMIT} fint/graphql-cli:latest"
+                withDockerRegistry([credentialsId: 'asgeir-docker', url: '']) {
+                    sh "docker push fint/graphql-cli:${VERSION}"
+                    sh "docker push fint/graphql-cli:latest"
                 }
             }
         }
