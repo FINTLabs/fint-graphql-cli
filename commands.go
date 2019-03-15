@@ -17,7 +17,7 @@ var GlobalFlags = []cli.Flag{
 	cli.StringFlag{
 		EnvVar: "GITHUB_OWNER",
 		Name:   "owner",
-		Value:  "FINTprosjektet",
+		Value:  "FINTLabs",
 		Usage:  "Git repository containing model",
 	},
 	cli.StringFlag{
