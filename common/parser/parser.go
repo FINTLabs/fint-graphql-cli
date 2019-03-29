@@ -96,8 +96,9 @@ func GetClasses(owner string, repo string, tag string, filename string, force bo
 	fmt.Print(".")
 
 	for _, class := range classes {
-		for _, a := range class.Attributes {
+		for i, a := range class.Attributes {
 			if typ, found := classMap[a.Type]; found {
+				class.Attributes[i].Package = typ.Package
 				if typ.Resource {
 					class.Resources = append(class.Resources, a)
 				}

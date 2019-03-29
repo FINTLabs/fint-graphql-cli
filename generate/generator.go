@@ -7,12 +7,14 @@ import (
 	"text/template"
 
 	"github.com/FINTLabs/fint-graphql-cli/generate/graphql"
+	"github.com/FINTLabs/fint-graphql-cli/generate/json"
 
 	"github.com/FINTLabs/fint-graphql-cli/common/types"
 )
 
 var funcMap = template.FuncMap{
 	//"add": func(i int, ii int) int { return i + ii },
+
 	"sub": func(i int, ii int) int { return i - ii },
 	"resourcePkg": func(s string) string {
 		return strings.Replace(s, "model", "model.resource", -1)
@@ -49,6 +51,10 @@ var funcMap = template.FuncMap{
 	"graphqlType": types.GetGraphQlType,
 	"graphqlTypeInh": func(a *types.InheritedAttribute) string {
 		return types.GetGraphQlType(&a.Attribute)
+	},
+	"jsonType": types.GetJsonType,
+	"jsonTypeInh": func(a *types.InheritedAttribute) string {
+		return types.GetJsonType(&a.Attribute)
 	},
 	"graphqlRelation": types.GetGraphQlRelationType,
 	"relTargetType": func(a *types.Association) string {
@@ -92,6 +98,23 @@ var funcMap = template.FuncMap{
 		return u
 	},
 	"getEndpoint": func(r string) string { return "get" + strings.Title(GetEndpointName(r)) + "()" },
+	"requiredAttributes": func(c *types.Class) []string {
+		var r []string
+		for _, a := range c.Attributes {
+			if !a.Optional {
+				r = append(r, a.Name)
+			}
+		}
+		for _, a := range c.InheritedAttributes {
+			if !a.Optional {
+				r = append(r, a.Name)
+			}
+		}
+		if c.Identifiable {
+			r = append(r, "_links")
+		}
+		return r
+	},
 }
 
 func GetPackagePath(p string) string {
@@ -196,4 +219,8 @@ func GetSchema(c *types.Class, t string) string {
 		panic(err)
 	}
 	return b.String()
+}
+
+func GetJsonSchema(c *types.Class) string {
+	return GetSchema(c, json.SCHEMA_TEMPLATE)
 }

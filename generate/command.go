@@ -65,6 +65,9 @@ func CmdGenerate(c *cli.Context) {
 		}
 	}
 
+	setupJsonSchemaDirStructure()
+	generateJsonSchema(classes)
+
 	setupGraphQlSchemaDirStructure()
 	generateGraphQlSchema(classes)
 	generateGraphQlQueryResolver(classes)
@@ -204,10 +207,48 @@ func generateGraphQlResolver(classes []*types.Class) {
 }
 
 func setupGraphQlSchemaDirStructure() {
-	os.RemoveAll("graphql")
+	os.RemoveAll(config.GRAPHQL_BASE_PATH)
 	os.Mkdir(config.GRAPHQL_BASE_PATH, 0777)
 }
 
 func includePackage(p string) bool {
 	return strings.Contains(p, "administrasjon") || strings.Contains(p, "utdanning") || strings.Contains(p, "felles")
+}
+
+func setupJsonSchemaDirStructure() {
+	os.RemoveAll(config.JSON_BASE_PATH)
+	os.Mkdir(config.JSON_BASE_PATH, 0777)
+}
+
+func writeJsonSchema(pkg string, schema string, content []byte) error {
+	path := fmt.Sprintf("%s/schema/%s", config.JSON_BASE_PATH, types.GetComponentName(pkg))
+	return writeFile(path, strings.ToLower(schema)+".json", []byte(content))
+}
+
+func generateJsonSchema(classes []*types.Class) {
+
+	fmt.Println("Generating JSON Schema")
+
+	var roots []*types.Class
+
+	for _, c := range classes {
+		if !c.Abstract && includePackage(c.Package) {
+			fmt.Printf("  > Creating schema: %s.json\n", c.Name)
+			schema := GetJsonSchema(c)
+			err := writeJsonSchema(c.Package, c.Name, []byte(schema))
+			if err != nil {
+				fmt.Printf("Unable to write file: %s", err)
+			}
+			if c.Stereotype == "hovedklasse" && c.Identifiable && !strings.Contains(c.Package, "kodeverk") {
+				include := false
+				for _, i := range c.Identifiers {
+					include = include || !i.Optional
+				}
+				if include {
+					roots = append(roots, c)
+				}
+			}
+		}
+	}
+
 }

@@ -10,3 +10,4 @@ build
 .vscode/
 classes.txt
 /graphql/
+/json/
