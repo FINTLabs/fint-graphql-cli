@@ -26,6 +26,9 @@ const SCHEMA_TEMPLATE = `{
 	{{- range $i, $rel := .Relations }}
                 "{{ $rel.Name }}": {
                     "type": "array",
+                    {{- if not $rel.Optional }}
+                    "minItems": 1,
+                    {{- end }}
                     "items": {
                         "type": "object",
                         "properties": {
