@@ -3,15 +3,15 @@ package types
 import "strings"
 
 var JSON_TYPE_MAP = map[string]string{
-	"string":    "string",
-	"boolean":   "boolean",
-	"date":      "string",
-	"dateTime":  "string",
-	"float":     "number",
-	"double":    "number",
-	"long":      "integer",
-	"int":       "integer",
-	"referanse": "string",
+	"string":    `"string"`,
+	"boolean":   `"boolean"`,
+	"date":      `"string", "format": "date-time"`,
+	"dateTime":  `"string", "format": "date-time"`,
+	"float":     `"number"`,
+	"double":    `"number"`,
+	"long":      `"integer"`,
+	"int":       `"integer"`,
+	"referanse": `"string", "format": "uri"`,
 }
 
 func GetJsonType(att *Attribute) string {
@@ -20,7 +20,7 @@ func GetJsonType(att *Attribute) string {
 
 	value, ok := JSON_TYPE_MAP[att.Type]
 	if ok {
-		result = "\"" + value + "\""
+		result = value
 	} else {
 		result = `"object", "$ref": "https://fintlabs.no/schema/` + GetComponentName(att.Package) + "/" + strings.ToLower(result) + `.json"`
 	}

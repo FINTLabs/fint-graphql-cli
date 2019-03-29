@@ -30,9 +30,11 @@ const SCHEMA_TEMPLATE = `{
                         "type": "object",
                         "properties": {
                             "href": {
-                                "type": "string"
+                                "type": "string",
+                                "format": "uri"
                             }
-                        }
+                        },
+                        "required": [ "href" ]
                     }
                 },
 	{{ end -}}
@@ -43,9 +45,11 @@ const SCHEMA_TEMPLATE = `{
                         "type": "object",
                         "properties": {
                             "href": {
-                                "type": "string"
+                                "type": "string",
+                                "format": "uri"
                             }
-                        }
+                        },
+                        "required": [ "href" ]
                     }
                 }
             },
@@ -55,9 +59,11 @@ const SCHEMA_TEMPLATE = `{
                     "type": "object",
                     "properties": {
                         "href": {
-                            "type": "string"
+                            "type": "string",
+                            "format": "uri"
                         }
-                    }
+                    },
+                    "required": [ "href" ]
             }
             },
             "required": [
