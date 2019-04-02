@@ -45,6 +45,7 @@ const SCHEMA_TEMPLATE = `{
 {{- end }}
                 "self": {
                     "type": "array",
+                    "minItems": 1,
                     "items": {
                         "type": "object",
                         "properties": {
