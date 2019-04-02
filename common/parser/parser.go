@@ -42,6 +42,7 @@ func GetClasses(owner string, repo string, tag string, filename string, force bo
 		properties := c.SelectElement("properties")
 		class := new(types.Class)
 
+		class.Tag = tag
 		class.Name = replaceNO(c.SelectAttr("name"))
 		class.Abstract = toBool(properties.SelectAttr("isAbstract"))
 		class.Extends = getExtends(doc, c)

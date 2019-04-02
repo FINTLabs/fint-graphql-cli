@@ -1,6 +1,7 @@
 package types
 
 type Class struct {
+	Tag                 string
 	Name                string
 	Abstract            bool
 	Deprecated          bool

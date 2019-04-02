@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"strings"
 	"text/template"
+	"time"
 
 	"github.com/FINTLabs/fint-graphql-cli/generate/graphql"
 	"github.com/FINTLabs/fint-graphql-cli/generate/json"
@@ -13,6 +14,9 @@ import (
 )
 
 var funcMap = template.FuncMap{
+	"timestamp": func() string {
+		return time.Now().Format(time.RFC3339)
+	},
 	//"add": func(i int, ii int) int { return i + ii },
 
 	"sub": func(i int, ii int) int { return i - ii },
