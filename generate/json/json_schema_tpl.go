@@ -13,7 +13,7 @@ const SCHEMA_TEMPLATE = `{
         },
     {{- end }}
 {{- end }}
-{{ if .InheritedAttributes }}
+{{- if .InheritedAttributes }}
     {{- range $att := .InheritedAttributes }}
         "{{ $att.Name }}": {
             "type": {{ $att | jsonTypeInh }}
@@ -23,12 +23,16 @@ const SCHEMA_TEMPLATE = `{
         "_links": {
             "type": "object",
             "properties": {
-{{ if .Relations }}
-	{{- range $i, $rel := .Relations }}
+{{- if .Relations -}}
+	{{- range $i, $rel := . | jsonRelations }}
+        {{- if $i }}, {{ end }}
                 "{{ $rel.Name }}": {
                     "type": "array",
                     {{- if not $rel.Optional }}
                     "minItems": 1,
+                    {{- end }}
+                    {{- if not $rel.List }}
+                    "maxItems": 1,
                     {{- end }}
                     "items": {
                         "type": "object",
@@ -40,23 +44,9 @@ const SCHEMA_TEMPLATE = `{
                         },
                         "required": [ "href" ]
                     }
-                },
-	{{ end -}}
-{{- end }}
-                "self": {
-                    "type": "array",
-                    "minItems": 1,
-                    "items": {
-                        "type": "object",
-                        "properties": {
-                            "href": {
-                                "type": "string",
-                                "format": "uri"
-                            }
-                        },
-                        "required": [ "href" ]
-                    }
                 }
+	{{- end -}}
+{{- end }}
             },
             "additionalProperties": {
                 "type": "array",
@@ -69,17 +59,15 @@ const SCHEMA_TEMPLATE = `{
                         }
                     },
                     "required": [ "href" ]
-            }
+                }
             },
             "required": [
 {{- if .Relations -}}
-    {{- range $i, $rel := .Relations }}
-        {{- if not $rel.Optional }}
-                "{{ $rel.Name }}",
-        {{- end -}}
+    {{- range $i, $rel := . | requiredRelations }}
+            {{- if $i}}, {{ end }}
+                "{{ $rel }}"
 	{{- end -}}
 {{- end }}
-                "self"
             ]
         }
     },

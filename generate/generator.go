@@ -119,6 +119,34 @@ var funcMap = template.FuncMap{
 		}
 		return r
 	},
+	"requiredRelations": func(c *types.Class) []string {
+		var r []string
+		for _, a := range c.Relations {
+			if !a.Optional {
+				r = append(r, a.Name)
+			}
+		}
+		if c.Identifiable {
+			r = append(r, "self")
+		}
+		return r
+	},
+	"jsonRelations": func(c *types.Class) []types.Association {
+		var r []types.Association
+		for _, a := range c.Relations {
+			r = append(r, a)
+		}
+		if c.Identifiable {
+			self := types.Association{}
+			self.Name = "self"
+			self.Target = c.Name
+			self.Optional = false
+			self.List = false
+			self.TargetPackage = c.Package
+			r = append(r, self)
+		}
+		return r
+	},
 }
 
 func GetPackagePath(p string) string {
