@@ -139,8 +139,10 @@ func getAttributesFromExtends(class *types.Class, classMap map[string]*types.Cla
 
 	var result []types.InheritedAttribute
 
-	if len(class.Extends) > 0 {
-		extendedClass := classMap[class.Extends]
+	extendedClass := class
+
+	for len(extendedClass.Extends) > 0 {
+		extendedClass = classMap[extendedClass.Extends]
 		for _, a := range extendedClass.Attributes {
 			var att = types.InheritedAttribute{
 				Owner:     extendedClass.Name,
@@ -148,21 +150,9 @@ func getAttributesFromExtends(class *types.Class, classMap map[string]*types.Cla
 			}
 			result = append(result, att)
 		}
-
-		for len(extendedClass.Extends) > 0 {
-			extendedClass = classMap[extendedClass.Extends]
-			for _, a := range extendedClass.Attributes {
-				var att = types.InheritedAttribute{
-					Owner:     extendedClass.Name,
-					Attribute: a,
-				}
-				result = append(result, att)
-			}
-		}
 	}
 
 	return result
-
 }
 
 func isResource(class *types.Class, classMap map[string]*types.Class) bool {
