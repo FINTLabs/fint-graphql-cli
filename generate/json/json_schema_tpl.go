@@ -3,7 +3,7 @@ package json
 const SCHEMA_TEMPLATE = `{
     "$comment": "Version: {{.Tag}} generated at {{ timestamp }}",
     "$schema": "http://json-schema.org/schema#",
-    "$id": "https://fintlabs.no/schema/{{ component .Package}}/{{ lowerCase .Name}}.json",
+    "$id": "https://schema.fintlabs.no/{{ component .Package}}/{{ lowerCase .Name}}.json",
     "type": "object",
     "properties": {
 {{- if .Attributes }}

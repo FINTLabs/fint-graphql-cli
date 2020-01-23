@@ -22,7 +22,7 @@ func GetJsonType(att *Attribute) string {
 	if ok {
 		result = value
 	} else {
-		result = `"object", "$ref": "https://fintlabs.no/schema/` + GetComponentName(att.Package) + "/" + strings.ToLower(result) + `.json"`
+		result = `"object", "$ref": "https://schema.fintlabs.no/` + GetComponentName(att.Package) + "/" + strings.ToLower(result) + `.json"`
 	}
 
 	if att.List {
