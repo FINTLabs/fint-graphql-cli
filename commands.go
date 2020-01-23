@@ -10,7 +10,7 @@ import (
 
 	"github.com/FINTLabs/fint-graphql-cli/branches"
 	"github.com/FINTLabs/fint-graphql-cli/tags"
-	"github.com/codegangsta/cli"
+	"github.com/urfave/cli"
 )
 
 var GlobalFlags = []cli.Flag{

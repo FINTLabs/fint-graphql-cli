@@ -6,7 +6,7 @@ import (
 	"github.com/FINTLabs/fint-graphql-cli/common/github"
 	"github.com/FINTLabs/fint-graphql-cli/common/parser"
 	"github.com/FINTLabs/fint-graphql-cli/common/types"
-	"github.com/codegangsta/cli"
+	"github.com/urfave/cli"
 )
 
 func CmdPrintClasses(c *cli.Context) {
