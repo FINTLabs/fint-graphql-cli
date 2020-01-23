@@ -12,7 +12,7 @@ import (
 	"github.com/FINTLabs/fint-graphql-cli/common/parser"
 	"github.com/FINTLabs/fint-graphql-cli/common/types"
 	"github.com/FINTLabs/fint-graphql-cli/common/utils"
-	"github.com/codegangsta/cli"
+	"github.com/urfave/cli"
 )
 
 func CmdGenerate(c *cli.Context) {
