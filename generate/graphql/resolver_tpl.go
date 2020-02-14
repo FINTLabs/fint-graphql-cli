@@ -49,7 +49,7 @@ public class {{ .Name }}Resolver implements GraphQLResolver<{{ .Name }}Resource>
                 {{ if $rel.List -}}
                     .collectList()
                 {{- else -}}
-                    .singleOrEmpty()
+                    .next()
                 {{- end }}
                 .toFuture();
     }
