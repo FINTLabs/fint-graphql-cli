@@ -9,6 +9,7 @@ import no.fint.graphql.model.Endpoints;
 import {{resourcePkg .Package}}.{{ .Name }}Resource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import reactor.core.publisher.Mono;
 
 @Service("{{component .Package}}{{.Name}}Service")
 public class {{ .Name }}Service {
@@ -19,7 +20,7 @@ public class {{ .Name }}Service {
     @Autowired
     private Endpoints endpoints;
 
-    public {{ .Name }}Resource get{{ .Name }}ResourceById(String id, String value, DataFetchingEnvironment dfe) {
+    public Mono<{{ .Name }}Resource> get{{ .Name }}ResourceById(String id, String value, DataFetchingEnvironment dfe) {
         return get{{ .Name }}Resource(
             endpoints.{{ .Package | getPathFromPackage | getEndpoint }} 
                 + "/{{ lowerCase .Name }}/" 
@@ -29,7 +30,7 @@ public class {{ .Name }}Service {
             dfe);
     }
 
-    public {{ .Name }}Resource get{{ .Name }}Resource(String url, DataFetchingEnvironment dfe) {
+    public Mono<{{ .Name }}Resource> get{{ .Name }}Resource(String url, DataFetchingEnvironment dfe) {
         return webClientRequest.get(url, {{ .Name }}Resource.class, dfe);
     }
 }

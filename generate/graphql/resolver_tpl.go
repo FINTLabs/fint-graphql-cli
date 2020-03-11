@@ -23,10 +23,11 @@ import {{ resourcePkg $rel.TargetPackage }}.{{ $rel.Target }}Resource;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 import java.util.List;
-import java.util.Objects;
-import java.util.stream.Collectors;
+import java.util.concurrent.CompletionStage;
 
 @Component("{{component .Package}}{{.Name}}Resolver")
 public class {{ .Name }}Resolver implements GraphQLResolver<{{ .Name }}Resource> {
@@ -39,17 +40,18 @@ public class {{ .Name }}Resolver implements GraphQLResolver<{{ .Name }}Resource>
 
 {{ range $i, $rel := .Relations -}}
 {{- if eq $rel.Stereotype "hovedklasse" }}
-    public {{ $rel | relTargetType }} get{{ $rel.Name | upperCaseFirst }}({{ $.Name }}Resource {{ lowerCase $.Name}}, DataFetchingEnvironment dfe) {
-        return {{ lowerCase $.Name}}.get{{ $rel.Name | upperCaseFirst }}()
+    public CompletionStage<{{ $rel | relTargetType }}> get{{ $rel.Name | upperCaseFirst }}({{ $.Name }}Resource {{ lowerCase $.Name}}, DataFetchingEnvironment dfe) {
+        return Flux.fromStream({{ lowerCase $.Name}}.get{{ $rel.Name | upperCaseFirst }}()
                 .stream()
                 .map(Link::getHref)
-                .map(l -> {{ lowerCase $rel.Target}}Service.get{{ $rel.Target}}Resource(l, dfe))
-                .filter(Objects::nonNull)
+                .map(l -> {{ lowerCase $rel.Target}}Service.get{{ $rel.Target}}Resource(l, dfe)))
+                .flatMap(Mono::flux)
                 {{ if $rel.List -}}
-                    .collect(Collectors.toList());
+                    .collectList()
                 {{- else -}}
-                    .findFirst().orElse(null);
+                    .next()
                 {{- end }}
+                .toFuture();
     }
 {{ end -}}
 {{- end }}
