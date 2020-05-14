@@ -141,7 +141,7 @@ var funcMap = template.FuncMap{
 			self.Name = "self"
 			self.Target = c.Name
 			self.Optional = false
-			self.List = false
+			self.List = true
 			self.TargetPackage = c.Package
 			r = append(r, self)
 		}
