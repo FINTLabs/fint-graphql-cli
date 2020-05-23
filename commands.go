@@ -33,7 +33,7 @@ var GlobalFlags = []cli.Flag{
 		Usage:  "File name containing information model",
 	},
 	cli.StringFlag{
-		EnvVar: "",
+		EnvVar: "TAG_NAME",
 		Name:   "tag, t",
 		Value:  "latest",
 		Usage:  "the tag (version) of the model to generate",
