@@ -1,10 +1,12 @@
 package types
 
+import "strings"
+
 var GRAPHQL_TYPE_MAP = map[string]string{
 	"string":    "String",
 	"boolean":   "Boolean",
 	"date":      "Date",
-	"dateTime":  "Date",
+	"datetime":  "Date",
 	"float":     "Float",
 	"double":    "Double",
 	"long":      "Long",
@@ -16,7 +18,7 @@ func GetGraphQlType(att *Attribute) string {
 
 	result := att.Type
 
-	value, ok := GRAPHQL_TYPE_MAP[att.Type]
+	value, ok := GRAPHQL_TYPE_MAP[strings.ToLower(att.Type)]
 	if ok {
 		result = value
 	}
