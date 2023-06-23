@@ -7,7 +7,21 @@ Generates `GraphQL` schemas.
 
 ## Usage
 
+### Exclude
 
+To exclude classes, relations, and attributes, use the --exclude flag. It performs a case-insensitive match.
+
+Example:
+```
+--exclude Fravar --exclude OTUngdom
+```
+
+To exclude from the schema, use the --exclude-schema flag.
+
+Example:
+```
+--exclude-schema OTUngdom
+```
 
 ## Install
 
