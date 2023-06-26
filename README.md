@@ -33,12 +33,12 @@ Mount the directory where you want the generated source code to be written as `/
 
 Linux / MacOS:
 ```bash
-docker run -v $(pwd):/src fint/graphql-cli:latest <ARGS>
+docker run -v $(pwd):/src ghcr.io/fintlabs/fint-graphql-cli:latest <ARGS>
 ```
 
 Windows PowerShell:
 ```ps1
-docker run -v ${pwd}:/src fint/graphql-cli:latest <ARGS>
+docker run -v ${pwd}:/src ghcr.io/fintlabs/fint-graphql-cli:latest <ARGS>
 ```
 
 ### Source
