@@ -37,30 +37,28 @@ func CmdGenerate(c *cli.Context) {
 		classes = classesOrig
 	} else {
 		for _, class := range classesOrig {
-			for _, s := range exclude {
-				if !strings.EqualFold(class.Name, s) {
-					var rel []types.Association
-					for _, r := range class.Relations {
-						if !strings.EqualFold(r.Target, s) {
-							rel = append(rel, r)
-						} else {
-							fmt.Printf("Excluding %s.%s from %s.%s\n", r.TargetPackage, r.Target, class.Package, class.Name)
-						}
+			if !isStringInList(class.Name, exclude) {
+				var rel []types.Association
+				for _, r := range class.Relations {
+					if !isStringInList(r.Target, exclude) {
+						rel = append(rel, r)
+					} else {
+						fmt.Printf("Excluding %s.%s from %s.%s\n", r.TargetPackage, r.Target, class.Package, class.Name)
 					}
-					class.Relations = rel
-					var att []types.Attribute
-					for _, a := range class.Attributes {
-						if !strings.EqualFold(a.Type, s) {
-							att = append(att, a)
-						} else {
-							fmt.Printf("Excluding %s (%s) from %s.%s\n", a.Name, a.Type, class.Package, class.Name)
-						}
-					}
-					class.Attributes = att
-					classes = append(classes, class)
-				} else {
-					fmt.Printf("Excluding class %s.%s\n", class.Package, class.Name)
 				}
+				class.Relations = rel
+				var att []types.Attribute
+				for _, a := range class.Attributes {
+					if !isStringInList(a.Type, exclude) {
+						att = append(att, a)
+					} else {
+						fmt.Printf("Excluding %s (%s) from %s.%s\n", a.Name, a.Type, class.Package, class.Name)
+					}
+				}
+				class.Attributes = att
+				classes = append(classes, class)
+			} else {
+				fmt.Printf("Excluding class %s.%s\n", class.Package, class.Name)
 			}
 		}
 	}
@@ -221,6 +219,15 @@ func excludeFromSchema(c *cli.Context, p string) bool {
 
 	for _, s := range excludeSchema {
 		if strings.EqualFold(p, s) {
+			return true
+		}
+	}
+	return false
+}
+
+func isStringInList(s string, list []string) bool {
+	for _, v := range list {
+		if strings.EqualFold(s, v) {
 			return true
 		}
 	}
