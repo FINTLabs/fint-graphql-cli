@@ -37,36 +37,34 @@ func CmdGenerate(c *cli.Context) {
 		classes = classesOrig
 	} else {
 		for _, class := range classesOrig {
-			for _, s := range exclude {
-				if !strings.Contains(class.Name, s) {
-					var rel []types.Association
-					for _, r := range class.Relations {
-						if !strings.Contains(r.Target, s) {
-							rel = append(rel, r)
-						} else {
-							fmt.Printf("Excluding %s.%s from %s.%s\n", r.TargetPackage, r.Target, class.Package, class.Name)
-						}
+			if !isStringInList(class.Name, exclude) {
+				var rel []types.Association
+				for _, r := range class.Relations {
+					if !isStringInList(r.Target, exclude) {
+						rel = append(rel, r)
+					} else {
+						fmt.Printf("Excluding %s.%s from %s.%s\n", r.TargetPackage, r.Target, class.Package, class.Name)
 					}
-					class.Relations = rel
-					var att []types.Attribute
-					for _, a := range class.Attributes {
-						if !strings.Contains(a.Type, s) {
-							att = append(att, a)
-						} else {
-							fmt.Printf("Excluding %s (%s) from %s.%s\n", a.Name, a.Type, class.Package, class.Name)
-						}
-					}
-					class.Attributes = att
-					classes = append(classes, class)
-				} else {
-					fmt.Printf("Excluding class %s.%s\n", class.Package, class.Name)
 				}
+				class.Relations = rel
+				var att []types.Attribute
+				for _, a := range class.Attributes {
+					if !isStringInList(a.Type, exclude) {
+						att = append(att, a)
+					} else {
+						fmt.Printf("Excluding %s (%s) from %s.%s\n", a.Name, a.Type, class.Package, class.Name)
+					}
+				}
+				class.Attributes = att
+				classes = append(classes, class)
+			} else {
+				fmt.Printf("Excluding class %s.%s\n", class.Package, class.Name)
 			}
 		}
 	}
 
 	setupGraphQlSchemaDirStructure()
-	generateGraphQlSchema(classes)
+	generateGraphQlSchema(classes, c)
 	generateGraphQlQueryResolver(classes)
 	generateGraphQlService(classes)
 	generateGraphQlResolver(classes)
@@ -107,14 +105,14 @@ func writeResolver(pkg string, className string, content []byte) error {
 	return writeFile(path, fmt.Sprintf("%sResolver.java", className), []byte(content))
 }
 
-func generateGraphQlSchema(classes []*types.Class) {
+func generateGraphQlSchema(classes []*types.Class, cli *cli.Context) {
 
 	fmt.Println("Generating GraphQL Schema")
 
 	var roots []*types.Class
 
 	for _, c := range classes {
-		if !c.Abstract && includePackage(c.Package) {
+		if !c.Abstract && includePackage(c.Package) && !excludeFromSchema(cli, c.Name) {
 			fmt.Printf("  > Creating schema: %s.graphqls\n", c.Name)
 			schema := GetGraphQlSchema(c)
 			err := writeSchema(c.Package, c.Name, []byte(schema))
@@ -210,4 +208,28 @@ func setupGraphQlSchemaDirStructure() {
 
 func includePackage(p string) bool {
 	return strings.Contains(p, "administrasjon") || strings.Contains(p, "utdanning") || strings.Contains(p, "felles")
+}
+
+func excludeFromSchema(c *cli.Context, p string) bool {
+	excludeSchema := c.StringSlice("exclude-schema")
+
+	if len(excludeSchema) == 0 {
+		return false
+	}
+
+	for _, s := range excludeSchema {
+		if strings.EqualFold(p, s) {
+			return true
+		}
+	}
+	return false
+}
+
+func isStringInList(s string, list []string) bool {
+	for _, v := range list {
+		if strings.EqualFold(s, v) {
+			return true
+		}
+	}
+	return false
 }

@@ -7,7 +7,21 @@ Generates `GraphQL` schemas.
 
 ## Usage
 
+### Exclude
 
+To exclude classes, relations, and attributes, use the --exclude flag. It performs a case-insensitive match.
+
+Example:
+```
+--exclude Fravar --exclude OTUngdom
+```
+
+To exclude from the schema, use the --exclude-schema flag.
+
+Example:
+```
+--exclude-schema OTUngdom
+```
 
 ## Install
 
@@ -19,12 +33,12 @@ Mount the directory where you want the generated source code to be written as `/
 
 Linux / MacOS:
 ```bash
-docker run -v $(pwd):/src fint/graphql-cli:latest <ARGS>
+docker run -v $(pwd):/src ghcr.io/fintlabs/fint-graphql-cli:latest <ARGS>
 ```
 
 Windows PowerShell:
 ```ps1
-docker run -v ${pwd}:/src fint/graphql-cli:latest <ARGS>
+docker run -v ${pwd}:/src ghcr.io/fintlabs/fint-graphql-cli:latest <ARGS>
 ```
 
 ### Source

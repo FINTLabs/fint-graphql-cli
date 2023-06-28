@@ -63,6 +63,10 @@ var Commands = []cli.Command{
 				Name:  "exclude, x",
 				Usage: "Classes to exclude from the generated schema and classes.",
 			},
+			cli.StringSliceFlag{
+				Name:  "exclude-schema, xs",
+				Usage: "Classes to exclude from the generated schema and classes.",
+			},
 		},
 	},
 	{
