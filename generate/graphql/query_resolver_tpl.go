@@ -14,6 +14,7 @@ import reactor.core.publisher.Mono;
 import java.util.concurrent.CompletionStage;
 
 @Component("{{component .Package}}{{.Name}}QueryResolver")
+@Slf4j
 public class {{ .Name }}QueryResolver implements GraphQLQueryResolver {
 
     @Autowired
@@ -24,6 +25,7 @@ public class {{ .Name }}QueryResolver implements GraphQLQueryResolver {
             String {{ .Name }},
 {{- end }}
             DataFetchingEnvironment dfe) {
+		log.info("New Query for {{ .Name }}");
 {{- range $i, $ident := .Identifiers }}
         if (StringUtils.isNotEmpty({{ .Name }})) {
             return service.get{{ $.Name }}ResourceById("{{ lowerCase .Name }}", {{.Name}}, dfe).toFuture();
