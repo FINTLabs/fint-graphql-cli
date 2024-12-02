@@ -9,6 +9,6 @@ require (
 	github.com/google/go-querystring v1.0.0 // indirect
 	github.com/mitchellh/go-homedir v1.0.0
 	github.com/urfave/cli v1.22.2
-	golang.org/x/net v0.0.0-20180921000356-2f5d2388922f
-	golang.org/x/text v0.3.2
+	golang.org/x/net v0.7.0
+	golang.org/x/text v0.7.0
 )
