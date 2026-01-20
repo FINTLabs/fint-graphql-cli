@@ -13,7 +13,7 @@ import no.fint.graphql.model.{{ component $rel.TargetPackage }}.{{ lowerCase $re
 {{ end -}}
 {{- end }}
 
-import no.novari.model.resource.Link;
+import no.novari.fint.model.resource.Link;
 import {{resourcePkg .Package}}.{{ .Name}}Resource;
 {{- if $ur -}}
 {{- range $i, $rel := $ur }}
