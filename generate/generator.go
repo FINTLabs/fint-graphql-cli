@@ -95,7 +95,7 @@ var funcMap = template.FuncMap{
 }
 
 func GetPackagePath(p string) string {
-	return strings.Join(strings.Split(p, ".")[3:], "/")
+	return strings.Join(strings.Split(p, ".")[4:], "/")
 }
 
 func GetEndpointName(p string) string {
