@@ -21,7 +21,7 @@ public class {{ .Name }}QueryResolver implements GraphQLQueryResolver {
     @Autowired
     private {{ .Name }}Service service;
 
-    public CompletionStage<{{ .Name }}Resource> get{{ .Name }}(
+    public CompletionStage<{{ .Name }}Resource> {{ lowerCase .Name }}(
 {{- range $i, $ident := .Identifiers }}
             String {{ .Name }},
 {{- end }}

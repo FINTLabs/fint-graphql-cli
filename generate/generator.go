@@ -92,6 +92,7 @@ var funcMap = template.FuncMap{
 		return u
 	},
 	"getEndpoint": func(r string) string { return "get" + strings.Title(GetEndpointName(r)) + "()" },
+	"endpointForClass": func(c *types.Class) string { return "get" + strings.Title(GetEndpointName(GetEndpointPathForClass(c))) + "()" },
 }
 
 func GetPackagePath(p string) string {
@@ -108,6 +109,10 @@ func GetEndpointName(p string) string {
 		}
 	}
 	return r
+}
+
+func GetEndpointPathForClass(c *types.Class) string {
+	return GetPackagePath(c.Package)
 }
 
 func GetGraphQlSchema(c *types.Class) string {

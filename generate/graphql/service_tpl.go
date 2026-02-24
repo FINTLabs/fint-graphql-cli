@@ -22,7 +22,7 @@ public class {{ .Name }}Service {
 
     public Mono<{{ .Name }}Resource> get{{ .Name }}ResourceById(String id, String value, DataFetchingEnvironment dfe) {
         return get{{ .Name }}Resource(
-            endpoints.{{ .Package | getPathFromPackage | getEndpoint }} 
+            endpoints.{{ endpointForClass . }} 
                 + "/{{ lowerCase .Name }}/" 
                 + id 
                 + "/" 
