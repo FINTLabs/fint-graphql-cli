@@ -54,7 +54,7 @@ public class {{ .Name }}Resolver implements GraphQLResolver<{{ .Name }}Resource>
                 .map(Link::getHref)
                 .flatMapSequential(href -> {{ lowerCase $rel.Target}}Service.get{{ $rel.Target}}Resource(href, dfe)
                         .map(Optional::of)
-                        .onErrorResume(WebClientResponseException.NotFound.class,
+                        .onErrorResume(WebClientResponseException.class,
                                 ex -> Mono.just(Optional.empty())),
                         8, 1)
                 .collectList()
