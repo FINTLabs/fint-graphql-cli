@@ -43,12 +43,36 @@ docker run -v ${pwd}:/src ghcr.io/fintlabs/fint-graphql-cli:latest <ARGS>
 
 ### Source
 
-To install, use `go get`:
+Use Go 1.27.1 and the checked-in vendor directory:
 
 ```bash
-go get -d github.com/FINTLabs/fint-graphql-cli
-go install github.com/FINTLabs/fint-graphql-cli
+./build.sh
+./build/fint-graphql-cli --version
+./build/fint-graphql-cli --tag v4.1.0 generate --exclude Fravar --exclude Fravarstype
 ```
+
+Version 2.0.0 generates Spring for GraphQL controllers with explicit `@QueryMapping`,
+`@SchemaMapping`, and `@Argument` names. Query annotations are emitted only for
+fields in the generated root schema, including `--exclude-schema` handling.
+Imports are sorted and deduplicated, with separate Java imports and resource
+wildcards for five or more classes from the same package.
+
+Both `Date` and `Long` scalars are declared. Empty object types are omitted.
+List relationships keep order, limit concurrency to eight, and retain null
+entries for failed or empty downstream responses. Services with an optional
+Feide identifier normalize blank usernames to null, preserving the application
+behavior for Elev and Skoleressurs.
+
+Build and test a local container without publishing it:
+
+```bash
+docker build --build-arg VERSION=2.0.0 -t fint-graphql-cli:2.0.0 .
+docker run --rm fint-graphql-cli:2.0.0 --version
+```
+
+The application-specific merged `PersonService` remains an override in
+`fint-graphql/PersonService.txt`; that application's `generate.sh` installs it
+after generation. No Python conversion is required for the CLI output.
 
 ## Author
 

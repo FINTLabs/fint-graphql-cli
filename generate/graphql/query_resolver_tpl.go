@@ -3,27 +3,19 @@ package graphql
 const QUERY_RESOLVER_TEMPLATE = `
 package no.fint.graphql.model.{{ component .Package }}.{{ lowerCase .Name}};
 
-import com.coxautodev.graphql.tools.GraphQLQueryResolver;
-import graphql.schema.DataFetchingEnvironment;
-import lombok.extern.slf4j.Slf4j;
-import {{resourcePkg .Package}}.{{ .Name }}Resource;
-import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
-import reactor.core.publisher.Mono;
+{{ queryImports . }}
 
-import java.util.concurrent.CompletionStage;
-
-@Component("{{component .Package}}{{.Name}}QueryResolver")
+@Controller("{{component .Package}}{{.Name}}QueryResolver")
 @Slf4j
-public class {{ .Name }}QueryResolver implements GraphQLQueryResolver {
+public class {{ .Name }}QueryResolver {
 
     @Autowired
     private {{ .Name }}Service service;
 
-    public CompletionStage<{{ .Name }}Resource> {{ lowerCase .Name }}(
+{{ if .PublicQuery }}    @QueryMapping(name = "{{ lowerCase .Name }}")
+{{ end }}    public CompletionStage<{{ .Name }}Resource> {{ lowerCase .Name }}(
 {{- range $i, $ident := .Identifiers }}
-            String {{ .Name }},
+            {{ if $.PublicQuery }}@Argument("{{ .Name }}") {{ end }}String {{ .Name }},
 {{- end }}
             DataFetchingEnvironment dfe) {
 		log.info("New Query for {{ .Name }}");

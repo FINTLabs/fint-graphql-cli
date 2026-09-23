@@ -65,7 +65,7 @@ func CmdGenerate(c *cli.Context) {
 
 	setupGraphQlSchemaDirStructure()
 	generateGraphQlSchema(classes, c)
-	generateGraphQlQueryResolver(classes)
+	generateGraphQlQueryResolver(classes, c)
 	generateGraphQlService(classes)
 	generateGraphQlResolver(classes)
 	fmt.Println("Done!")
@@ -113,20 +113,17 @@ func generateGraphQlSchema(classes []*types.Class, cli *cli.Context) {
 
 	for _, c := range classes {
 		if !c.Abstract && includePackage(c.Package) && !excludeFromSchema(cli, c.Name) {
-			fmt.Printf("  > Creating schema: %s.graphqls\n", c.Name)
 			schema := GetGraphQlSchema(c)
+			if schema == "" {
+				continue
+			}
+			fmt.Printf("  > Creating schema: %s.graphqls\n", c.Name)
 			err := writeSchema(c.Package, c.Name, []byte(schema))
 			if err != nil {
 				fmt.Printf("Unable to write file: %s", err)
 			}
-			if c.Stereotype == "hovedklasse" && c.Identifiable && !strings.Contains(c.Package, "kodeverk") {
-				include := false
-				for _, i := range c.Identifiers {
-					include = include || !i.Optional
-				}
-				if include {
-					roots = append(roots, c)
-				}
+			if isRootQuery(c) {
+				roots = append(roots, c)
 			}
 		}
 	}
@@ -143,14 +140,14 @@ func generateGraphQlSchema(classes []*types.Class, cli *cli.Context) {
 	}
 }
 
-func generateGraphQlQueryResolver(classes []*types.Class) {
+func generateGraphQlQueryResolver(classes []*types.Class, cli *cli.Context) {
 
 	fmt.Println("Generating GraphQL Query Resolvers")
 
 	for _, c := range classes {
 		if !c.Abstract && c.Stereotype == "hovedklasse" && includePackage(c.Package) {
 			fmt.Printf("  > Creating query resolver: %s.java\n", c.Name)
-			class := GetGraphQlQueryReolver(c)
+			class := getQueryResolver(c, isRootQuery(c) && !excludeFromSchema(cli, c.Name))
 			err := writeQueryResolver(c.Package, c.Name, []byte(class))
 			if err != nil {
 				fmt.Printf("Unable to write file: %s", err)

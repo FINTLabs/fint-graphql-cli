@@ -12,6 +12,9 @@ import (
 )
 
 var funcMap = template.FuncMap{
+	"normalizeFeidenavn": normalizeFeidenavn,
+	"queryImports":       queryImports,
+	"resolverImports":    resolverImports,
 	//"add": func(i int, ii int) int { return i + ii },
 	"sub": func(i int, ii int) int { return i - ii },
 	"resourcePkg": func(s string) string {
@@ -92,7 +95,9 @@ var funcMap = template.FuncMap{
 		return u
 	},
 	"getEndpoint": func(r string) string { return "get" + strings.Title(GetEndpointName(r)) + "()" },
-	"endpointForClass": func(c *types.Class) string { return "get" + strings.Title(GetEndpointName(GetEndpointPathForClass(c))) + "()" },
+	"endpointForClass": func(c *types.Class) string {
+		return "get" + strings.Title(GetEndpointName(GetEndpointPathForClass(c))) + "()"
+	},
 }
 
 func GetPackagePath(p string) string {
@@ -116,15 +121,54 @@ func GetEndpointPathForClass(c *types.Class) string {
 }
 
 func GetGraphQlSchema(c *types.Class) string {
+	if len(c.Attributes) == 0 && len(c.InheritedAttributes) == 0 && len(c.Relations) == 0 {
+		return ""
+	}
 	return GetSchema(c, graphql.SCHEMA_TEMPLATE)
 }
 
 func GetGraphQlQueryReolver(c *types.Class) string {
-	return getClass(c, graphql.QUERY_RESOLVER_TEMPLATE)
+	return getQueryResolver(c, isRootQuery(c))
+}
+
+type queryResolverModel struct {
+	*types.Class
+	PublicQuery bool
+}
+
+func getQueryResolver(c *types.Class, publicQuery bool) string {
+	return getClass(&queryResolverModel{Class: c, PublicQuery: publicQuery}, graphql.QUERY_RESOLVER_TEMPLATE)
+}
+
+// Share eligibility between SDL roots and annotated controllers.
+func isRootQuery(c *types.Class) bool {
+	if c.Abstract || c.Stereotype != "hovedklasse" || !c.Identifiable || strings.Contains(c.Package, "kodeverk") || !includePackage(c.Package) {
+		return false
+	}
+	for _, identifier := range c.Identifiers {
+		if !identifier.Optional {
+			return true
+		}
+	}
+	return false
 }
 
 func GetGraphQlService(c *types.Class) string {
 	return getClass(c, graphql.SERVICE_TEMPLATE)
+}
+
+// An empty optional Feide identifier must be absent, not an invalid Identifikator.
+func normalizeFeidenavn(c *types.Class) bool {
+	attributes := append([]types.Attribute{}, c.Attributes...)
+	for _, inherited := range c.InheritedAttributes {
+		attributes = append(attributes, inherited.Attribute)
+	}
+	for _, attribute := range attributes {
+		if attribute.Name == "feidenavn" && attribute.Type == "Identifikator" && attribute.Optional && !attribute.List {
+			return true
+		}
+	}
+	return false
 }
 
 func GetGraphQlResolver(c *types.Class) string {
@@ -169,7 +213,7 @@ func GetEndpoints(r []string) string {
 	return b.String()
 }
 
-func getClass(c *types.Class, t string) string {
+func getClass(c interface{}, t string) string {
 	tpl := template.New("class").Funcs(funcMap)
 
 	parse, err := tpl.Parse(t)

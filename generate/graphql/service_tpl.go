@@ -9,6 +9,9 @@ import no.fint.graphql.model.Endpoints;
 import {{resourcePkg .Package}}.{{ .Name }}Resource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+{{ if normalizeFeidenavn . -}}
+import org.springframework.util.StringUtils;
+{{ end -}}
 import reactor.core.publisher.Mono;
 
 @Service("{{component .Package}}{{.Name}}Service")
@@ -31,7 +34,12 @@ public class {{ .Name }}Service {
     }
 
     public Mono<{{ .Name }}Resource> get{{ .Name }}Resource(String url, DataFetchingEnvironment dfe) {
-        return webClientRequest.get(url, {{ .Name }}Resource.class, dfe);
+        return webClientRequest.get(url, {{ .Name }}Resource.class, dfe){{ if normalizeFeidenavn . }}.map(resource -> {
+            if (resource.getFeidenavn() != null && !StringUtils.hasText(resource.getFeidenavn().getIdentifikatorverdi())) {
+                resource.setFeidenavn(null);
+            }
+            return resource;
+        }){{ end }};
     }
 }
 
